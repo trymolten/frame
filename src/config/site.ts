@@ -2,7 +2,7 @@
 // metadata, generated icons and the marketing site.
 
 // Used until NEXT_PUBLIC_APP_URL is set for the deployment.
-const FALLBACK_URL = "https://useframe.vercel.app";
+const FALLBACK_URL = "https://trymolten.ai";
 
 /** Accepts "example.com" or "https://example.com". */
 export function normalizeUrl(value: string) {

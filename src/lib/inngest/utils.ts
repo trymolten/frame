@@ -67,6 +67,12 @@ export const lastAssistantMessageContent = async (result: AgentResult) => {
   return message.content.map((item) => item.text).join("");
 };
 
+// Small local models often write the "use client" directive without its
+// quotes, which doesn't compile. An unquoted directive is never intended, so
+// restore the quotes; correct files are left as they are.
+export const fixUseClientDirective = (content: string) =>
+  content.replace(/^\s*use client[ \t]*;?[ \t]*(?=\r?\n|$)/, '"use client";');
+
 export const parseAgentOutput = (value: Message[]) => {
   const output = value[0];
 

@@ -22,6 +22,7 @@ import {
   getSandbox,
   agentModel,
   parseAgentOutput,
+  fixUseClientDirective,
   lastAssistantMessageContent,
 } from "@/lib/inngest/utils";
 import { getSandboxProvider } from "@/lib/sandbox";
@@ -181,8 +182,9 @@ export const codeAgentFunction = inngest.createFunction(
                   const sandbox = await getSandbox(sandboxId);
 
                   for (const file of files) {
-                    await sandbox.writeFile(file.path, file.content);
-                    updatedFiles[file.path] = file.content;
+                    const content = fixUseClientDirective(file.content);
+                    await sandbox.writeFile(file.path, content);
+                    updatedFiles[file.path] = content;
                   }
 
                   return updatedFiles;

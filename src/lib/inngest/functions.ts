@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { NonRetriableError } from "inngest";
 import {
-  openai,
   createTool,
   createAgent,
   createState,
@@ -21,6 +20,7 @@ import { inngest } from "@/lib/inngest/client";
 import { codeAgentRunSchema } from "@/lib/inngest/events";
 import {
   getSandbox,
+  agentModel,
   parseAgentOutput,
   lastAssistantMessageContent,
 } from "@/lib/inngest/utils";
@@ -120,7 +120,7 @@ export const codeAgentFunction = inngest.createFunction(
       description:
         "An expert coding agent that writes clean, efficient, and maintainable code.",
       system: SYSTEM_PROMPT,
-      model: openai({
+      model: agentModel({
         model: "gpt-4.1",
         defaultParameters: {
           temperature: 0.1,
@@ -257,7 +257,7 @@ export const codeAgentFunction = inngest.createFunction(
       name: "fragment-title-generator",
       description: "An agent that generates a title for the fragment",
       system: FRAGMENT_TITLE_PROMPT,
-      model: openai({
+      model: agentModel({
         model: "gpt-4o",
       }),
     });
@@ -266,7 +266,7 @@ export const codeAgentFunction = inngest.createFunction(
       name: "response-generator",
       description: "An agent that generates a response for the fragment",
       system: RESPONSE_PROMPT,
-      model: openai({
+      model: agentModel({
         model: "gpt-4o",
       }),
     });

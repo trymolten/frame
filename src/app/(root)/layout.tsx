@@ -9,8 +9,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import { TRPCReactProvider } from "@/trpc/client";
+import { clerkProviderProps } from "@/config/clerk";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -283,14 +283,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { userId } = await auth();
+  const { userId, redirectToSignIn } = await auth();
 
+  // Defence in depth: the proxy already protects these routes. This keeps the
+  // return URL so users land back where they started after signing in.
   if (!userId) {
-    redirect("/sign-in");
+    return redirectToSignIn();
   }
 
   return (
-    <ClerkProvider>
+    <ClerkProvider {...clerkProviderProps}>
       <TRPCReactProvider>
         <html lang="en" suppressHydrationWarning>
           <body

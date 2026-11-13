@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { TRPCReactProvider } from "@/trpc/client";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { clerkProviderProps } from "@/config/clerk";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -282,7 +283,7 @@ export default function AuthRootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider {...clerkProviderProps}>
       <TRPCReactProvider>
         <html lang="en" suppressHydrationWarning>
           <body

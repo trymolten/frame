@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/header";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { clerkProviderProps } from "@/config/clerk";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -282,7 +283,7 @@ export default function WebsiteRootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider {...clerkProviderProps}>
       <html lang="en" suppressHydrationWarning>
         <body
           suppressHydrationWarning

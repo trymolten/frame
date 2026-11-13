@@ -40,7 +40,10 @@ const dockerBin = () => process.env.SANDBOX_DOCKER_BIN || "docker";
 
 const docker = (args: string[], options: DockerOptions = {}) =>
   new Promise<CommandResult>((resolve, reject) => {
-    const child = spawn(dockerBin(), args);
+    // The binary comes from PATH or SANDBOX_DOCKER_BIN, never from the
+    // project, so keep this call out of Next's output file tracing (otherwise
+    // Turbopack traces the whole project into the server bundle).
+    const child = spawn(/* turbopackIgnore: true */ dockerBin(), args);
     let stdout = "";
     let stderr = "";
     let timedOut = false;

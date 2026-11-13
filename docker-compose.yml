@@ -58,7 +58,7 @@ services:
   # Only builds the sandbox image (sandbox/nextjs/e2b.Dockerfile); the app
   # starts one container from it per agent run.
   sandbox-image:
-    image: frame-nextjs-template
+    image: molten-nextjs-template
     build:
       context: ./sandbox/nextjs
       dockerfile: e2b.Dockerfile

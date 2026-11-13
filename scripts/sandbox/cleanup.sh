@@ -4,7 +4,7 @@
 set -eu
 
 docker="${SANDBOX_DOCKER_BIN:-docker}"
-ids=$("$docker" ps --all --quiet --filter label=frame.sandbox)
+ids=$("$docker" ps --all --quiet --filter label=molten.sandbox)
 
 if [ -z "$ids" ]; then
   echo "No sandbox containers."

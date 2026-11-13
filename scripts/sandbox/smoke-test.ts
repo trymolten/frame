@@ -29,7 +29,7 @@ const poll = async (check: () => Promise<boolean>, timeoutMs: number) => {
 
 const main = async () => {
   const provider = getSandboxProvider();
-  const marker = `frame-smoke-${Date.now()}`;
+  const marker = `molten-smoke-${Date.now()}`;
   console.log(`Provider: ${provider.name}`);
 
   const sandbox = await step("create sandbox", () =>

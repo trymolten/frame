@@ -12,11 +12,11 @@ import {
 
 // Every container we start carries this label, so connect() never touches
 // anything else and leftovers are easy to find:
-//   docker ps --filter label=frame.sandbox
-const SANDBOX_LABEL = "frame.sandbox";
-const SANDBOX_ID_PATTERN = /^frame-sandbox-[a-f0-9]+$/;
+//   docker ps --filter label=molten.sandbox
+const SANDBOX_LABEL = "molten.sandbox";
+const SANDBOX_ID_PATTERN = /^molten-sandbox-[a-f0-9]+$/;
 const APP_DIR = "/home/user";
-const EXPIRES_AT_FILE = "/tmp/.frame-sandbox-expires-at";
+const EXPIRES_AT_FILE = "/tmp/.molten-sandbox-expires-at";
 
 // Match E2B: a new sandbox lives 5 minutes unless setTimeout() extends it,
 // and a command gets 60 seconds.
@@ -101,7 +101,7 @@ const expiresAt = (timeoutMs: number) =>
 // (with --rm) removes it. setTimeout() only rewrites that file.
 const supervisorScript = (startCommand: string) =>
   [
-    `echo "$FRAME_SANDBOX_EXPIRES_AT" > ${EXPIRES_AT_FILE}`,
+    `echo "$MOLTEN_SANDBOX_EXPIRES_AT" > ${EXPIRES_AT_FILE}`,
     `${startCommand} &`,
     `while [ "$(date +%s)" -lt "$(cat ${EXPIRES_AT_FILE})" ]; do sleep 5; done`,
   ].join("\n");
@@ -227,7 +227,7 @@ export const dockerSandboxProvider: SandboxProvider = {
       throw new Error(`Unknown sandbox template "${template}"`);
     }
 
-    const name = `frame-sandbox-${randomBytes(6).toString("hex")}`;
+    const name = `molten-sandbox-${randomBytes(6).toString("hex")}`;
     const result = await docker([
       "run",
       "--detach",
@@ -244,7 +244,7 @@ export const dockerSandboxProvider: SandboxProvider = {
       "--publish",
       `127.0.0.1::${spec.port}`,
       "--env",
-      `FRAME_SANDBOX_EXPIRES_AT=${expiresAt(DEFAULT_SANDBOX_TIMEOUT_MS)}`,
+      `MOLTEN_SANDBOX_EXPIRES_AT=${expiresAt(DEFAULT_SANDBOX_TIMEOUT_MS)}`,
       template,
       "sh",
       "-c",

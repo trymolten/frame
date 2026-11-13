@@ -14,21 +14,37 @@ export const getSandbox = async (sandboxId: string) => {
   return sandbox;
 };
 
-// Agents talk to any OpenAI-compatible API. OPENAI_BASE_URL points them
-// elsewhere (e.g. a local Ollama), and OPENAI_MODEL then replaces every
-// agent's model. The Inngest server makes these requests, so the URL must be
-// reachable from it. OPENAI_REASONING_EFFORT is sent as `reasoning_effort`;
-// thinking models on Ollama (e.g. qwen3) drop tool calls unless it's "none".
+// AI_PROVIDER picks the agents' model. When it's unset, OpenAI is used only
+// if OPENAI_API_KEY is set; otherwise every agent runs on a local Ollama
+// model, so local setups need no API key.
+const getAiProvider = () => {
+  const name =
+    process.env.AI_PROVIDER?.trim().toLowerCase() ||
+    (process.env.OPENAI_API_KEY ? "openai" : "ollama");
+
+  if (name !== "openai" && name !== "ollama") {
+    throw new Error(
+      `Unknown AI_PROVIDER "${name}"; expected "openai" or "ollama"`
+    );
+  }
+  return name;
+};
+
+// Thinking models such as qwen3 return no tool calls while thinking. Not part
+// of agent-kit's request type, hence the spread.
+const NO_THINKING = { reasoning_effort: "none" };
+
 export const agentModel = (options: Parameters<typeof openai>[0]) => {
-  const effort = process.env.OPENAI_REASONING_EFFORT;
+  if (getAiProvider() === "openai") {
+    return openai(options);
+  }
+  // The Inngest server makes the request, so the URL must be reachable from
+  // it (docker compose points it at host.docker.internal).
   return openai({
     ...options,
-    model: process.env.OPENAI_MODEL || options.model,
-    baseUrl: process.env.OPENAI_BASE_URL || options.baseUrl,
-    defaultParameters: {
-      ...(effort && { reasoning_effort: effort }),
-      ...options.defaultParameters,
-    },
+    model: process.env.OLLAMA_MODEL || "qwen3:8b",
+    baseUrl: process.env.OLLAMA_BASE_URL || "http://localhost:11434/v1",
+    defaultParameters: { ...options.defaultParameters, ...NO_THINKING },
   });
 };
 

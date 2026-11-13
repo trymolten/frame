@@ -1,0 +1,92 @@
+# Local stack: Postgres, migrations, the Inngest dev server and Next.js in dev
+# mode, plus the image the Docker sandbox provider runs generated apps in.
+#
+#   docker compose up
+#
+# Secrets come from .env (see .env.example). Set APP_PORT, INNGEST_PORT or
+# POSTGRES_PORT there (or in the shell) if the default host ports are taken.
+name: frame
+
+x-app: &app
+  build: .
+  image: frame-app-dev
+  env_file:
+    - path: .env
+      required: false
+  # Overrides .env, whose URLs point at services on the host.
+  environment:
+    DATABASE_URL: postgresql://frame:frame@postgres:5432/frame?schema=public
+    DIRECT_URL: postgresql://frame:frame@postgres:5432/frame?schema=public
+    NEXT_PUBLIC_APP_URL: http://localhost:${APP_PORT:-3000}
+    INNGEST_DEV: "1"
+    INNGEST_BASE_URL: http://inngest:8288
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: frame
+      POSTGRES_PASSWORD: frame
+      POSTGRES_DB: frame
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U frame -d frame"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  # Applies migrations and generates the Prisma client into a volume the app
+  # shares, then exits.
+  migrate:
+    <<: *app
+    command: sh -c "npx prisma migrate deploy && npx prisma generate"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - prisma-client:/app/src/generated/prisma
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  # Only builds the sandbox image (sandbox/nextjs/e2b.Dockerfile); the app
+  # starts one container from it per agent run.
+  sandbox-image:
+    image: frame-nextjs-template
+    build:
+      context: ./sandbox/nextjs
+      dockerfile: e2b.Dockerfile
+    command: ["true"]
+    restart: "no"
+
+  inngest:
+    image: inngest/inngest:v1.53.0
+    command: inngest dev --no-discovery -u http://app:3000/api/inngest
+    ports:
+      - ${INNGEST_PORT:-8288}:8288
+    depends_on:
+      - app
+
+  app:
+    <<: *app
+    ports:
+      - ${APP_PORT:-3000}:3000
+    volumes:
+      - .:/app
+      # Keep the container's Linux node_modules and .next apart from the host's.
+      - /app/node_modules
+      - /app/.next
+      - prisma-client:/app/src/generated/prisma
+      # Lets the Docker sandbox provider start preview containers on the host's
+      # Docker; their ports are published on the host's localhost.
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  postgres-data:
+  prisma-client:

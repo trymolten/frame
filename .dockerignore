@@ -1,0 +1,14 @@
+# Secrets never enter an image; compose passes .env in at runtime.
+.env*
+!.env.example
+
+.git
+.next
+node_modules
+src/generated
+.clerk
+.claude
+.vercel
+coverage
+*.log
+*.tsbuildinfo

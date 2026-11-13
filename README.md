@@ -1,5 +1,56 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Run the whole stack with Docker
+
+```bash
+cp .env.example .env   # add your Clerk keys and OPENAI_API_KEY
+docker compose up
+```
+
+This starts Postgres 17, applies migrations, the Inngest dev server
+([localhost:8288](http://localhost:8288)), and the app in dev mode with hot
+reload ([localhost:3000](http://localhost:3000)). The first run also builds
+the code sandbox image, which takes a few minutes. If a port is taken, set
+`APP_PORT`, `INNGEST_PORT` or `POSTGRES_PORT` in `.env`. After changing
+dependencies, run `docker compose up --build -V`. Edits hot-reload; if a
+new route folder isn't picked up, run `docker compose restart app`.
+
+The code agent needs a model whichever sandbox runs the generated app: set
+`OPENAI_API_KEY`, or point it at a local model.
+
+### Local model with Ollama
+
+Any OpenAI-compatible API works. Pick a model that supports tool calls, then
+set:
+
+```bash
+OPENAI_BASE_URL=http://host.docker.internal:11434/v1   # http://localhost:11434/v1 without compose
+OPENAI_MODEL=qwen2.5-coder:7b                          # used by every agent
+```
+
+The Inngest server makes the model requests, so the URL must be reachable
+from where Inngest runs. Small models often write broken code or tool
+arguments, and Ollama's default 4096-token context is tight for the agent's
+prompt (raise it with `OLLAMA_CONTEXT_LENGTH`).
+
+### Code sandbox: Docker or E2B
+
+The agent builds each app in a sandbox, picked by `SANDBOX_PROVIDER`:
+
+- `docker`: a local container per run, from `sandbox/nextjs/e2b.Dockerfile`.
+  No account needed. Previews open at `http://localhost:<port>`, and
+  containers stop when `SANDBOX_TIMEOUT` passes. Outside compose, build the
+  image once with `scripts/sandbox/build-image.sh`. To check the provider, run
+  `npx tsx scripts/sandbox/smoke-test.ts`. To remove leftover containers, run
+  `scripts/sandbox/cleanup.sh`.
+- `e2b`: E2B cloud sandboxes from the `frame-nextjs-template` template. Needs
+  `E2B_API_KEY`.
+
+When `SANDBOX_PROVIDER` is unset, Frame uses E2B if `E2B_API_KEY` is set and
+Docker otherwise. In compose, the app reaches Docker through the mounted
+`/var/run/docker.sock`, which gives it full control of your Docker engine.
+Use this setup only for local development.
+
 ## Getting Started
 
 First, run the development server:

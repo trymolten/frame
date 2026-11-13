@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { NonRetriableError } from "inngest";
-import { Sandbox } from "@e2b/code-interpreter";
 import {
-  openai,
   createTool,
   createAgent,
   createState,
@@ -22,10 +20,12 @@ import { inngest } from "@/lib/inngest/client";
 import { codeAgentRunSchema } from "@/lib/inngest/events";
 import {
   getSandbox,
+  agentModel,
   parseAgentOutput,
   lastAssistantMessageContent,
 } from "@/lib/inngest/utils";
-import { SANDBOX_TIMEOUT } from "@/constants/sandbox";
+import { getSandboxProvider } from "@/lib/sandbox";
+import { SANDBOX_TEMPLATE, SANDBOX_TIMEOUT } from "@/constants/sandbox";
 import {
   completeGeneration,
   markGenerationFailed,
@@ -74,7 +74,7 @@ export const codeAgentFunction = inngest.createFunction(
     }
 
     const sandboxId = await step.run("get-sandbox-id", async () => {
-      const sandbox = await Sandbox.create("frame-nextjs-template");
+      const sandbox = await getSandboxProvider().create(SANDBOX_TEMPLATE);
       await sandbox.setTimeout(SANDBOX_TIMEOUT);
       return sandbox.sandboxId;
     });
@@ -120,7 +120,7 @@ export const codeAgentFunction = inngest.createFunction(
       description:
         "An expert coding agent that writes clean, efficient, and maintainable code.",
       system: SYSTEM_PROMPT,
-      model: openai({
+      model: agentModel({
         model: "gpt-4.1",
         defaultParameters: {
           temperature: 0.1,
@@ -140,7 +140,7 @@ export const codeAgentFunction = inngest.createFunction(
 
               try {
                 const sandbox = await getSandbox(sandboxId);
-                const result = await sandbox.commands.run(command, {
+                const result = await sandbox.runCommand(command, {
                   onStdout: (data) => {
                     buffers.stdout += data;
                   },
@@ -181,7 +181,7 @@ export const codeAgentFunction = inngest.createFunction(
                   const sandbox = await getSandbox(sandboxId);
 
                   for (const file of files) {
-                    await sandbox.files.write(file.path, file.content);
+                    await sandbox.writeFile(file.path, file.content);
                     updatedFiles[file.path] = file.content;
                   }
 
@@ -209,7 +209,7 @@ export const codeAgentFunction = inngest.createFunction(
                 const sandbox = await getSandbox(sandboxId);
                 const contents = [];
                 for (const file of files) {
-                  const content = await sandbox.files.read(file);
+                  const content = await sandbox.readFile(file);
                   contents.push({ path: file, content });
                 }
                 return JSON.stringify(contents);
@@ -257,7 +257,7 @@ export const codeAgentFunction = inngest.createFunction(
       name: "fragment-title-generator",
       description: "An agent that generates a title for the fragment",
       system: FRAGMENT_TITLE_PROMPT,
-      model: openai({
+      model: agentModel({
         model: "gpt-4o",
       }),
     });
@@ -266,7 +266,7 @@ export const codeAgentFunction = inngest.createFunction(
       name: "response-generator",
       description: "An agent that generates a response for the fragment",
       system: RESPONSE_PROMPT,
-      model: openai({
+      model: agentModel({
         model: "gpt-4o",
       }),
     });
@@ -286,8 +286,7 @@ export const codeAgentFunction = inngest.createFunction(
     const sandboxUrl = await step.run("get-sandbox-url", async () => {
       try {
         const sandbox = await getSandbox(sandboxId);
-        const host = sandbox.getHost(3000);
-        return `https://${host}`;
+        return await sandbox.getUrl(3000);
       } catch (error) {
         console.error("Failed to get sandbox URL:", error);
         throw new Error("Failed to retrieve sandbox URL");

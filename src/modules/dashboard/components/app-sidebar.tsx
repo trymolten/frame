@@ -1,24 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "next-themes";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useClerk, useUser, UserButton } from "@clerk/nextjs";
 import {
   ChevronsUpDownIcon,
   CreditCardIcon,
   FolderIcon,
+  GlobeIcon,
   HouseIcon,
   LogOutIcon,
   SearchIcon,
   SettingsIcon,
   StarIcon,
   SunMoonIcon,
+  type LucideIcon,
 } from "lucide-react";
 
 import { useTRPC } from "@/trpc/client";
+import { isActivePath, routes } from "@/lib/routes";
 import { Kbd } from "@/components/ui/kbd";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -67,21 +70,25 @@ export function AppSidebar() {
 
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupContent>
-              <Suspense fallback={<NavSkeleton />}>
+            <nav aria-label="Main">
+              <SidebarGroupContent>
                 <PrimaryNav
                   onNavigate={onNavigate}
                   onSearch={() => setSearchOpen(true)}
                 />
-              </Suspense>
-            </SidebarGroupContent>
+              </SidebarGroupContent>
+            </nav>
           </SidebarGroup>
 
           <SidebarGroup>
-            <SidebarGroupLabel>Recents</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <RecentProjects onNavigate={onNavigate} />
-            </SidebarGroupContent>
+            <nav aria-labelledby="sidebar-recents">
+              <SidebarGroupLabel id="sidebar-recents">
+                Recents
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <RecentProjects onNavigate={onNavigate} />
+              </SidebarGroupContent>
+            </nav>
           </SidebarGroup>
         </SidebarContent>
 
@@ -89,6 +96,8 @@ export function AppSidebar() {
           <CreditsCard />
           <UserButton
             showName
+            userProfileMode="navigation"
+            userProfileUrl={routes.accountSettings}
             appearance={{
               elements: {
                 rootBox: "w-full",
@@ -109,7 +118,7 @@ export function AppSidebar() {
 
 function WorkspaceMenu() {
   const { user } = useUser();
-  const { openUserProfile, signOut } = useClerk();
+  const { signOut } = useClerk();
   const { theme, setTheme } = useTheme();
   const trpc = useTRPC();
   const { data: usage } = useQuery(trpc.usage.getStatus.queryOptions());
@@ -155,14 +164,16 @@ function WorkspaceMenu() {
               </span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => openUserProfile()}>
-              <SettingsIcon />
-              Account settings
+            <DropdownMenuItem asChild>
+              <Link href={routes.accountSettings}>
+                <SettingsIcon />
+                Account settings
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/pricing">
+              <Link href={routes.usageSettings}>
                 <CreditCardIcon />
-                Plans and credits
+                Usage and plan
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSub>
@@ -185,7 +196,16 @@ function WorkspaceMenu() {
               </DropdownMenuSubContent>
             </DropdownMenuSub>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => signOut({ redirectUrl: "/" })}>
+            <DropdownMenuItem asChild>
+              <Link href={routes.website}>
+                <GlobeIcon />
+                Frame website
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onSelect={() => signOut({ redirectUrl: routes.home })}
+            >
               <LogOutIcon />
               Sign out
             </DropdownMenuItem>
@@ -204,50 +224,70 @@ function PrimaryNav({
   onSearch: () => void;
 }) {
   const pathname = usePathname();
-  const filter = useSearchParams().get("filter");
-  const isHome = pathname === "/" || pathname === "/dashboard";
-  const isProjects = pathname === "/projects";
 
   return (
     <SidebarMenu>
+      <NavItem
+        href={routes.home}
+        icon={HouseIcon}
+        label="Home"
+        isActive={isActivePath(pathname, routes.home)}
+        onNavigate={onNavigate}
+      />
       <SidebarMenuItem>
-        <SidebarMenuButton asChild isActive={isHome}>
-          <Link href="/" onClick={onNavigate}>
-            <HouseIcon />
-            <span>Home</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton onClick={onSearch}>
+        <SidebarMenuButton
+          onClick={onSearch}
+          aria-keyshortcuts="Meta+K Control+K"
+        >
           <SearchIcon />
           <span>Search</span>
           <Kbd className="ml-auto group-data-[collapsible=icon]:hidden">⌘K</Kbd>
         </SidebarMenuButton>
       </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton
-          asChild
-          isActive={isProjects && filter !== "starred"}
-        >
-          <Link href="/projects" onClick={onNavigate}>
-            <FolderIcon />
-            <span>All projects</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton
-          asChild
-          isActive={isProjects && filter === "starred"}
-        >
-          <Link href="/projects?filter=starred" onClick={onNavigate}>
-            <StarIcon />
-            <span>Starred</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
+      <NavItem
+        href={routes.projects}
+        icon={FolderIcon}
+        label="All projects"
+        isActive={isActivePath(pathname, routes.projects)}
+        onNavigate={onNavigate}
+      />
+      <NavItem
+        href={routes.starredProjects}
+        icon={StarIcon}
+        label="Starred"
+        isActive={isActivePath(pathname, routes.starredProjects)}
+        onNavigate={onNavigate}
+      />
     </SidebarMenu>
+  );
+}
+
+function NavItem({
+  href,
+  icon: Icon,
+  label,
+  isActive,
+  onNavigate,
+}: {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+  isActive: boolean;
+  onNavigate: () => void;
+}) {
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={isActive}>
+        <Link
+          href={href}
+          aria-current={isActive ? "page" : undefined}
+          onClick={onNavigate}
+        >
+          <Icon />
+          <span>{label}</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 }
 
@@ -282,22 +322,10 @@ function RecentProjects({ onNavigate }: { onNavigate: () => void }) {
       {data.items.map((project) => (
         <SidebarMenuItem key={project.id}>
           <SidebarMenuButton asChild className="text-sidebar-foreground/80">
-            <Link href={`/projects/${project.id}`} onClick={onNavigate}>
+            <Link href={routes.project(project.id)} onClick={onNavigate}>
               <span className="truncate">{project.name}</span>
             </Link>
           </SidebarMenuButton>
-        </SidebarMenuItem>
-      ))}
-    </SidebarMenu>
-  );
-}
-
-function NavSkeleton() {
-  return (
-    <SidebarMenu>
-      {Array.from({ length: 4 }, (_, i) => (
-        <SidebarMenuItem key={i}>
-          <SidebarMenuSkeleton showIcon />
         </SidebarMenuItem>
       ))}
     </SidebarMenu>

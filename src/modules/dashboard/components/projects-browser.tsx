@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { createContext, useContext, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Loader2Icon, PlusIcon, SearchIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { routes } from "@/lib/routes";
 import { useTRPC } from "@/trpc/client";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { PillNav } from "@/components/pill-nav";
 import {
   Select,
   SelectContent,
@@ -30,7 +30,7 @@ import {
 import { ProjectsEmpty } from "@/modules/dashboard/components/projects-empty";
 import { buildingPollInterval } from "@/modules/dashboard/lib/polling";
 
-type Filter = "all" | "starred";
+export type ProjectsFilter = "all" | "starred";
 type Sort = "updated" | "created" | "name";
 
 const SORT_LABELS: Record<Sort, string> = {
@@ -39,14 +39,41 @@ const SORT_LABELS: Record<Sort, string> = {
   name: "Name",
 };
 
-export function ProjectsBrowser() {
-  const trpc = useTRPC();
-  // The URL owns the filter so the sidebar's Starred link and this toggle
-  // always agree.
-  const filter: Filter =
-    useSearchParams().get("filter") === "starred" ? "starred" : "all";
+const FILTER_LINKS = [
+  { href: routes.projects, label: "All" },
+  { href: routes.starredProjects, label: "Starred" },
+] as const;
+
+function useBrowserState() {
   const [sort, setSort] = useState<Sort>("updated");
   const [search, setSearch] = useState("");
+  return { sort, setSort, search, setSearch };
+}
+
+const BrowserStateContext = createContext<ReturnType<
+  typeof useBrowserState
+> | null>(null);
+
+// All and Starred are separate pages, so the browser remounts when switching.
+// Rendered by the projects layout, this keeps the search and sort across.
+export function ProjectsBrowserState({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <BrowserStateContext value={useBrowserState()}>
+      {children}
+    </BrowserStateContext>
+  );
+}
+
+// Rendered by /projects and /projects/starred; the route picks the filter.
+export function ProjectsBrowser({ filter }: { filter: ProjectsFilter }) {
+  const trpc = useTRPC();
+  const state = useContext(BrowserStateContext);
+  if (!state) throw new Error("ProjectsBrowser needs ProjectsBrowserState");
+  const { sort, setSort, search, setSearch } = state;
   const debouncedSearch = useDebouncedValue(search.trim());
 
   const query = useInfiniteQuery(
@@ -67,16 +94,6 @@ export function ProjectsBrowser() {
 
   const projects = query.data?.pages.flatMap((page) => page.items) ?? [];
 
-  // History API updates useSearchParams without a server round-trip.
-  const changeFilter = (next: string) => {
-    if (next !== "all" && next !== "starred") return; // ignore deselect
-    window.history.replaceState(
-      null,
-      "",
-      next === "starred" ? "/projects?filter=starred" : "/projects"
-    );
-  };
-
   return (
     <div className="mx-auto w-full max-w-7xl px-5 pt-16 pb-16 md:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -91,7 +108,7 @@ export function ProjectsBrowser() {
           </p>
         </div>
         <Button asChild size="sm" className="h-9 rounded-full px-4">
-          <Link href="/">
+          <Link href={routes.home}>
             <PlusIcon />
             New project
           </Link>
@@ -112,21 +129,7 @@ export function ProjectsBrowser() {
           />
         </InputGroup>
         <div className="flex items-center gap-2">
-          <ToggleGroup
-            type="single"
-            variant="outline"
-            size="sm"
-            value={filter}
-            onValueChange={changeFilter}
-            aria-label="Show"
-          >
-            <ToggleGroupItem value="all" className="px-3">
-              All
-            </ToggleGroupItem>
-            <ToggleGroupItem value="starred" className="px-3">
-              Starred
-            </ToggleGroupItem>
-          </ToggleGroup>
+          <PillNav label="Filter projects" items={FILTER_LINKS} />
           <Select
             value={sort}
             onValueChange={(value) => setSort(value as Sort)}
@@ -196,7 +199,13 @@ export function ProjectsBrowser() {
   );
 }
 
-function EmptyResults({ filter, search }: { filter: Filter; search: string }) {
+function EmptyResults({
+  filter,
+  search,
+}: {
+  filter: ProjectsFilter;
+  search: string;
+}) {
   if (search) {
     return (
       <ProjectsEmpty
@@ -219,7 +228,7 @@ function EmptyResults({ filter, search }: { filter: Filter; search: string }) {
       description="Describe an app on the home page and Frame builds it for you."
       action={
         <Button asChild size="sm">
-          <Link href="/">Start building</Link>
+          <Link href={routes.home}>Start building</Link>
         </Button>
       }
     />

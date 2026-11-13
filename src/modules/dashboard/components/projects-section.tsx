@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { useTRPC } from "@/trpc/client";
+import { routes } from "@/lib/routes";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -55,9 +56,12 @@ export function ProjectsSection() {
 
   return (
     <section
-      aria-label="Your projects"
+      aria-labelledby="home-projects-heading"
       className="relative z-10 -mt-16 rounded-t-[28px] border-t bg-background px-5 pt-5 pb-12 md:px-8"
     >
+      <h2 id="home-projects-heading" className="sr-only">
+        Your projects
+      </h2>
       <Tabs
         value={tabId}
         onValueChange={(value) => setTabId(value as Tab["id"])}
@@ -83,7 +87,7 @@ export function ProjectsSection() {
           >
             <Link
               href={
-                tabId === "starred" ? "/projects?filter=starred" : "/projects"
+                tabId === "starred" ? routes.starredProjects : routes.projects
               }
             >
               View all

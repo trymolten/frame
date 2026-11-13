@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { auth } from "@clerk/nextjs/server";
 import { TRPCReactProvider } from "@/trpc/client";
+import { RouteFocus } from "@/components/route-focus";
 import { clerkProviderProps } from "@/config/clerk";
 
 export const viewport = siteViewport;
@@ -46,6 +47,7 @@ export default async function RootLayout({
               disableTransitionOnChange
             >
               {children}
+              <RouteFocus />
               <Toaster />
             </ThemeProvider>
             {process.env.NODE_ENV === "production" && (

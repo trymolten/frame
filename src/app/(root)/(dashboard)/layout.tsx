@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getQueryClient, trpc } from "@/trpc/server";
+import { MAIN_CONTENT_ID } from "@/lib/routes";
+import { SkipLink } from "@/components/skip-link";
 import {
   SidebarInset,
   SidebarProvider,
@@ -16,8 +18,8 @@ export default async function DashboardLayout({
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false";
 
-  // Sidebar recents, the home "Recently viewed" tab and the credits card all
-  // render from these on first paint.
+  // Sidebar recents, the home "Recently viewed" tab, the credits card and the
+  // usage settings page all render from these on first paint.
   const queryClient = getQueryClient();
   await Promise.all([
     queryClient.prefetchQuery(
@@ -29,8 +31,14 @@ export default async function DashboardLayout({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <SidebarProvider defaultOpen={defaultOpen}>
+        <SkipLink />
         <AppSidebar />
-        <SidebarInset className="overflow-hidden md:border">
+        {/* SidebarInset is the page's <main>. */}
+        <SidebarInset
+          id={MAIN_CONTENT_ID}
+          tabIndex={-1}
+          className="overflow-hidden outline-none md:border"
+        >
           <SidebarTrigger className="absolute top-3 left-3 z-20 text-muted-foreground" />
           {children}
         </SidebarInset>

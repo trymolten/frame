@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { routes } from "@/lib/routes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,9 +40,10 @@ import {
   RenameProjectDialog,
 } from "@/modules/dashboard/components/project-dialogs";
 
-// Hidden until the card is hovered or focused, like Lovable.
+// Hidden until the card is hovered or focused. Only where hovering is
+// possible: on touch screens the actions stay visible.
 const REVEAL_ON_HOVER =
-  "opacity-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100 data-[state=open]:opacity-100";
+  "[@media(hover:hover)]:opacity-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100 data-[state=open]:opacity-100";
 
 interface ProjectCardProps {
   project: ProjectCardData;
@@ -53,22 +55,19 @@ export function ProjectCard({ project, actions, owner }: ProjectCardProps) {
   const { setStarred, rename, remove } = actions;
   const [dialog, setDialog] = useState<"rename" | "delete" | null>(null);
 
-  const href = `/projects/${project.id}`;
+  const href = routes.project(project.id);
   const toggleStar = () =>
     setStarred.mutate({ id: project.id, starred: !project.starred });
 
   return (
-    <div className="group/card">
-      <Link
-        href={href}
-        aria-label={`Open ${project.name}`}
-        className="block rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-      >
-        <ProjectThumbnail
-          project={project}
-          className="transition-shadow group-hover/card:shadow-[0_6px_24px_-10px_rgb(0_0_0/0.25)]"
-        />
-      </Link>
+    // One link per card: the title's ::after stretches over the whole card,
+    // so the thumbnail is clickable without a second, duplicate tab stop.
+    // The star and menu buttons sit above it.
+    <div className="group/card relative">
+      <ProjectThumbnail
+        project={project}
+        className="transition-shadow group-hover/card:shadow-[0_6px_24px_-10px_rgb(0_0_0/0.25)] motion-reduce:transition-none"
+      />
 
       <Item size="sm" className="items-start gap-2.5 px-0 pt-3 pb-0">
         <ItemMedia>
@@ -83,7 +82,7 @@ export function ProjectCard({ project, actions, owner }: ProjectCardProps) {
           <ItemTitle className="w-full">
             <Link
               href={href}
-              className="truncate outline-none hover:underline focus-visible:underline"
+              className="truncate outline-none after:absolute after:-inset-1.5 after:rounded-[18px] hover:underline focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50"
             >
               {project.name}
             </Link>
@@ -96,7 +95,7 @@ export function ProjectCard({ project, actions, owner }: ProjectCardProps) {
             {formatEdited(project.updatedAt)}
           </ItemDescription>
         </ItemContent>
-        <ItemActions className="gap-0">
+        <ItemActions className="relative z-10 gap-0">
           <Button
             variant="ghost"
             size="icon"

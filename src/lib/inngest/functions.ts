@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { NonRetriableError } from "inngest";
 import { Sandbox } from "@e2b/code-interpreter";
 import {
   openai,
@@ -18,6 +19,7 @@ import {
 
 import prisma from "@/lib/prisma";
 import { inngest } from "@/lib/inngest/client";
+import { codeAgentRunSchema } from "@/lib/inngest/events";
 import {
   getSandbox,
   parseAgentOutput,
@@ -45,17 +47,27 @@ export const codeAgentFunction = inngest.createFunction(
       { key: "event.data.userId", limit: 3 },
     ],
     onFailure: async ({ event }) => {
-      await markGenerationFailed(event.data.event.data.projectId);
+      // Nothing to mark if the run failed because its payload was invalid.
+      const payload = codeAgentRunSchema.safeParse(event.data.event.data);
+      if (payload.success) {
+        await markGenerationFailed(payload.data.projectId);
+      }
     },
   },
   { event: "code-agent/run" },
   async ({ event, step }) => {
+    const payload = codeAgentRunSchema.safeParse(event.data);
+    if (!payload.success) {
+      throw new NonRetriableError("Invalid code-agent/run payload", {
+        cause: payload.error,
+      });
+    }
+    const { projectId, value } = payload.data;
+
     // The project may have been deleted (or rolled back after an ambiguous
     // send failure) before this run started; don't spend a sandbox on it.
     const projectExists = await step.run("check-project", async () =>
-      Boolean(
-        await prisma.project.count({ where: { id: event.data.projectId } })
-      )
+      Boolean(await prisma.project.count({ where: { id: projectId } }))
     );
     if (!projectExists) {
       return { skipped: "project-not-found" };
@@ -73,7 +85,7 @@ export const codeAgentFunction = inngest.createFunction(
         const formattedMessages: Message[] = [];
         const messages = await prisma.message.findMany({
           where: {
-            projectId: event.data.projectId,
+            projectId,
           },
           orderBy: {
             createdAt: "desc",
@@ -239,7 +251,7 @@ export const codeAgentFunction = inngest.createFunction(
       },
     });
 
-    const result = await network.run(event.data.value);
+    const result = await network.run(value);
 
     const fragmentTitleGenerator = createAgent({
       name: "fragment-title-generator",
@@ -284,10 +296,10 @@ export const codeAgentFunction = inngest.createFunction(
 
     await step.run("save-result", async () => {
       if (isError) {
-        return await markGenerationFailed(event.data.projectId);
+        return await markGenerationFailed(projectId);
       }
 
-      return await completeGeneration(event.data.projectId, {
+      return await completeGeneration(projectId, {
         content: parseAgentOutput(responseOutput),
         type: "RESULT",
         fragment: {

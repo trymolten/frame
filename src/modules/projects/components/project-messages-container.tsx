@@ -10,6 +10,12 @@ import ProjectMessageCard from "@/modules/projects/components/project-message-ca
 import ProjectMessageForm from "@/modules/projects/components/project-message-form";
 import ProjectMessageLoading from "@/modules/projects/components/project-message-loading";
 
+function hasPendingRun(messages?: { role: "USER" | "ASSISTANT" }[]) {
+  if (!messages) return false;
+  const users = messages.filter((m) => m.role === "USER").length;
+  return users > messages.length - users;
+}
+
 interface ProjectMessagesContainerProps {
   projectId: string;
   activeFragment: Fragment | null;
@@ -29,7 +35,11 @@ const ProjectMessagesContainer = ({
     trpc.messages.getMessages.queryOptions(
       { projectId },
       {
-        refetchInterval: 3000,
+        // Only poll while a run is pending: each run adds exactly one reply,
+        // so more user messages than replies means work is queued. Idle
+        // editors would otherwise hit the database every few seconds.
+        refetchInterval: (query) =>
+          hasPendingRun(query.state.data) ? 2000 : false,
       }
     )
   );
@@ -53,8 +63,7 @@ const ProjectMessagesContainer = ({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
 
-  const lastMessage = messages[messages.length - 1];
-  const isLastMessageUser = lastMessage?.role === "USER";
+  const isBuilding = hasPendingRun(messages);
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -73,7 +82,7 @@ const ProjectMessagesContainer = ({
               onFragmentClick={setActiveFragment}
             />
           ))}
-          {isLastMessageUser && <ProjectMessageLoading />}
+          {isBuilding && <ProjectMessageLoading />}
           <div ref={bottomRef} />
         </div>
       </div>

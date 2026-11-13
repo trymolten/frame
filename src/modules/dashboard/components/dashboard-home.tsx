@@ -14,7 +14,7 @@ export function DashboardHome() {
       <section className="relative isolate flex min-h-[calc(100svh-6rem)] flex-col items-center justify-center overflow-hidden px-5 pt-20 pb-32">
         <div
           aria-hidden
-          className="frame-glow pointer-events-none absolute inset-x-[-15%] bottom-[-4%] -z-10 h-[90%]"
+          className="brand-glow pointer-events-none absolute inset-x-[-15%] bottom-[-4%] -z-10 h-[90%]"
         />
         <h1 className="max-w-3xl text-center text-4xl leading-[1.1] font-semibold tracking-[-0.025em] text-balance md:text-5xl">
           What should we build{firstName ? `, ${firstName}` : ""}?

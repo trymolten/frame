@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function GlobalNotFound() {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="theme-frame min-h-svh bg-background font-sans text-foreground antialiased">
+      <body className="theme-brand min-h-svh bg-background font-sans text-foreground antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

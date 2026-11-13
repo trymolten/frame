@@ -27,7 +27,7 @@ export default function WebsiteRootLayout({
           suppressHydrationWarning
           className={cn(
             displayFont.variable,
-            "theme-frame flex min-h-screen flex-col bg-background font-sans text-foreground antialiased"
+            "theme-brand flex min-h-screen flex-col bg-background font-sans text-foreground antialiased"
           )}
         >
           <ThemeProvider

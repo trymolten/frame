@@ -16,7 +16,7 @@ interface GlobalErrorProps {
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html lang="en">
-      <body className="theme-frame min-h-svh bg-background font-sans text-foreground antialiased">
+      <body className="theme-brand min-h-svh bg-background font-sans text-foreground antialiased">
         <title>Something went wrong | Frame AI</title>
         <main className="flex min-h-svh">
           <StatusView

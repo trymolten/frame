@@ -22,7 +22,7 @@ export default function PoliciesRootLayout({
         suppressHydrationWarning
         className={cn(
           displayFont.variable,
-          "theme-frame min-h-screen bg-background font-sans text-foreground antialiased"
+          "theme-brand min-h-screen bg-background font-sans text-foreground antialiased"
         )}
       >
         <ThemeProvider

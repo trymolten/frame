@@ -2,12 +2,12 @@ import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
-interface FrameLogoProps {
+interface BrandLogoProps {
   className?: string;
   size?: number;
 }
 
-export function FrameLogo({ className, size = 24 }: FrameLogoProps) {
+export function BrandLogo({ className, size = 24 }: BrandLogoProps) {
   return (
     <Image
       src="/logo.png"

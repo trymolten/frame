@@ -17,13 +17,20 @@ export const getSandbox = async (sandboxId: string) => {
 // Agents talk to any OpenAI-compatible API. OPENAI_BASE_URL points them
 // elsewhere (e.g. a local Ollama), and OPENAI_MODEL then replaces every
 // agent's model. The Inngest server makes these requests, so the URL must be
-// reachable from it.
-export const agentModel = (options: Parameters<typeof openai>[0]) =>
-  openai({
+// reachable from it. OPENAI_REASONING_EFFORT is sent as `reasoning_effort`;
+// thinking models on Ollama (e.g. qwen3) drop tool calls unless it's "none".
+export const agentModel = (options: Parameters<typeof openai>[0]) => {
+  const effort = process.env.OPENAI_REASONING_EFFORT;
+  return openai({
     ...options,
     model: process.env.OPENAI_MODEL || options.model,
     baseUrl: process.env.OPENAI_BASE_URL || options.baseUrl,
+    defaultParameters: {
+      ...(effort && { reasoning_effort: effort }),
+      ...options.defaultParameters,
+    },
   });
+};
 
 export const lastAssistantMessageContent = async (result: AgentResult) => {
   const lastAssistantMessageIndex = result.output.findLastIndex(

@@ -10,7 +10,7 @@ import {
 } from "@/lib/routes";
 
 const ID = "3f2b8c1e-9d4a-4b7e-8f21-6c5d0a9e7b13";
-const at = (path: string) => new URL(path, "https://frame.test");
+const at = (path: string) => new URL(path, "https://molten.test");
 
 describe("routes", () => {
   it("keeps the signed-in home at the root URL", () => {

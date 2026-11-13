@@ -54,8 +54,13 @@ export default clerkMiddleware(
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Skip Next.js internals, static files (unless found in search params) and
+    // metadata files: root icons and social images, robots, sitemap and
+    // manifest have no extension or one not listed below. Crawlers fetch them
+    // without cookies, and through Clerk they'd get a handshake redirect
+    // instead of the file. Only root-level images are skipped, so one under a
+    // protected route still needs a session.
+    "/((?!_next|(?:apple-)?icon(?:\\d+|-\\w+)?(?:/|$)|(?:opengraph|twitter)-image|robots\\.txt|sitemap\\.xml|manifest\\.json|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Always run for API routes
     "/(api|trpc)(.*)",
   ],

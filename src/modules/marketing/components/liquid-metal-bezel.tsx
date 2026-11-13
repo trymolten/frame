@@ -5,20 +5,20 @@ import { LiquidMetal } from "@paper-design/shaders-react";
 
 import { cn } from "@/lib/utils";
 
-interface LiquidMetalFrameProps {
+interface LiquidMetalBezelProps {
   children: React.ReactNode;
   className?: string;
 }
 
 /**
  * The brand's signature: content held in a bezel of moving liquid metal.
- * A static chrome gradient sits underneath, so the frame still reads as
+ * A static chrome gradient sits underneath, so the bezel still reads as
  * metal before WebGL starts (or where it's unavailable).
  */
-export function LiquidMetalFrame({
+export function LiquidMetalBezel({
   children,
   className,
-}: LiquidMetalFrameProps) {
+}: LiquidMetalBezelProps) {
   const reduceMotion = useReducedMotion();
 
   return (

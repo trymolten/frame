@@ -11,9 +11,11 @@ import { CodeIcon, CrownIcon, EyeIcon } from "lucide-react";
 import { FileCollection } from "@/types/file";
 import { Fragment } from "@/generated/prisma/client";
 import { useTRPC } from "@/trpc/client";
+import { routes } from "@/lib/routes";
 import { useCurrentTheme } from "@/hooks/use-current-theme";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ResizablePanel,
   ResizableHandle,
@@ -52,24 +54,45 @@ const ProjectView = ({ projectId }: ProjectViewProps) => {
   }, [projectId, markOpened]);
 
   return (
-    <div className="h-screen">
+    <div className="h-full">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel
+          tagName="section"
+          aria-label="Chat"
           defaultSize={35}
           minSize={20}
           className="flex flex-col min-h-0"
         >
           <ErrorBoundary
-            fallback={<div>Error: Failed to load project header</div>}
+            fallback={
+              <PanelMessage>The project name didn&apos;t load.</PanelMessage>
+            }
           >
-            <Suspense fallback={<div>Loading Project Header...</div>}>
+            <Suspense
+              fallback={
+                <div className="flex h-[49px] items-center border-b px-4">
+                  <Skeleton className="h-4 w-32" />
+                </div>
+              }
+            >
               <ProjectHeader projectId={projectId} />
             </Suspense>
           </ErrorBoundary>
           <ErrorBoundary
-            fallback={<div>Error: Failed to load project messages</div>}
+            fallback={
+              <PanelMessage>
+                Messages didn&apos;t load. Reload the page to try again.
+              </PanelMessage>
+            }
           >
-            <Suspense fallback={<div>Loading Project Messages...</div>}>
+            <Suspense
+              fallback={
+                <div className="flex-1 space-y-4 p-4">
+                  <Skeleton className="ml-auto h-14 w-3/4 rounded-xl" />
+                  <Skeleton className="h-28 w-5/6 rounded-xl" />
+                </div>
+              }
+            >
               <ProjectMessagesContainer
                 activeFragment={activeFragment}
                 setActiveFragment={setActiveFragment}
@@ -79,7 +102,12 @@ const ProjectView = ({ projectId }: ProjectViewProps) => {
           </ErrorBoundary>
         </ResizablePanel>
         <ResizableHandle className="hover:bg-primary transition-colors" />
-        <ResizablePanel defaultSize={65} minSize={50}>
+        <ResizablePanel
+          tagName="section"
+          aria-label="Preview"
+          defaultSize={65}
+          minSize={50}
+        >
           <Tabs
             defaultValue="preview"
             className="h-full gap-y-0"
@@ -98,7 +126,7 @@ const ProjectView = ({ projectId }: ProjectViewProps) => {
               <div className="ml-auto flex items-center gap-x-2">
                 {!hasProPlan && (
                   <Button asChild size="sm">
-                    <Link href="/pricing">
+                    <Link href={routes.pricing}>
                       <CrownIcon /> Upgrade
                     </Link>
                   </Button>
@@ -129,5 +157,13 @@ const ProjectView = ({ projectId }: ProjectViewProps) => {
     </div>
   );
 };
+
+function PanelMessage({ children }: { children: React.ReactNode }) {
+  return (
+    <p role="alert" className="p-4 text-sm text-muted-foreground">
+      {children}
+    </p>
+  );
+}
 
 export default ProjectView;

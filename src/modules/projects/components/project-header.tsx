@@ -5,6 +5,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronDownIcon, ChevronLeftIcon, SunMoonIcon } from "lucide-react";
 
 import { useTRPC } from "@/trpc/client";
+import { routes } from "@/lib/routes";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,16 +35,18 @@ const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
 
   return (
     <header className="flex items-center justify-between border-b p-2">
+      {/* The visible name is a menu button; this gives the page its heading. */}
+      <h1 className="sr-only">{project.name}</h1>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
-            className="focus-visible:ring-0 hover:bg-transparent hover:opacity-75 transition-opacity pl-2"
+            className="hover:bg-transparent hover:opacity-75 transition-opacity pl-2"
           >
             <Image
               src="/logo.png"
-              alt="Frame Logo"
+              alt=""
               width={24}
               height={24}
               className="shrink-0"
@@ -54,9 +57,9 @@ const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="start">
           <DropdownMenuItem asChild>
-            <Link href="/">
+            <Link href={routes.home}>
               <ChevronLeftIcon />
-              Go to Dashboard
+              Back to home
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

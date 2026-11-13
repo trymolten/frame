@@ -25,13 +25,14 @@ set:
 
 ```bash
 OPENAI_BASE_URL=http://host.docker.internal:11434/v1   # http://localhost:11434/v1 without compose
-OPENAI_MODEL=qwen2.5-coder:7b                          # used by every agent
+OPENAI_MODEL=<model>                                   # used by every agent
 ```
 
 The Inngest server makes the model requests, so the URL must be reachable
-from where Inngest runs. Small models often write broken code or tool
-arguments, and Ollama's default 4096-token context is tight for the agent's
-prompt (raise it with `OLLAMA_CONTEXT_LENGTH`).
+from where Inngest runs. The model must return structured tool calls: in
+testing, `qwen2.5:3b` and `qwen2.5-coder:7b` wrote tool calls as plain text,
+so the agent created no files. Ollama's default 4096-token context is also
+tight for the agent's prompt (raise it with `OLLAMA_CONTEXT_LENGTH`).
 
 ### Code sandbox: Docker or E2B
 

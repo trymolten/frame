@@ -1,9 +1,6 @@
 // Single source of truth for Molten's name, copy and brand colors. Used by
 // metadata, generated icons and the marketing site.
 
-// Used until NEXT_PUBLIC_APP_URL is set for the deployment.
-const FALLBACK_URL = "https://useframe.vercel.app";
-
 /** Accepts "example.com" or "https://example.com". */
 export function normalizeUrl(value: string) {
   return /^https?:\/\//.test(value) ? value : `https://${value}`;
@@ -12,7 +9,14 @@ export function normalizeUrl(value: string) {
 export const siteConfig = {
   name: "Molten",
   legalName: "Molten",
-  url: normalizeUrl(process.env.NEXT_PUBLIC_APP_URL || FALLBACK_URL),
+  // NEXT_PUBLIC_APP_URL wins. Without it, Vercel's production domain (the
+  // custom domain once one is connected), then localhost for local dev.
+  url: normalizeUrl(
+    process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ||
+      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+      "http://localhost:3000"
+  ),
   tagline: "From a sentence to a running app.",
   description:
     "Molten turns a plain-language prompt into a working Next.js app, runs it in a live sandbox and keeps every version. Built for developers and for teams.",

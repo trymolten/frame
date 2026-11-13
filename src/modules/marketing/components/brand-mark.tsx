@@ -10,7 +10,7 @@ interface BrandMarkProps {
   className?: string;
 }
 
-// Frame's logo: the liquid-metal daisy, rendered live. Holds still when the
+// Molten's logo: the liquid-metal daisy, rendered live. Holds still when the
 // user prefers reduced motion.
 export function BrandMark({ size = 28, className }: BrandMarkProps) {
   const reduceMotion = useReducedMotion();

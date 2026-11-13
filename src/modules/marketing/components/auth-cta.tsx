@@ -34,7 +34,7 @@ export function AuthCta({ size = "lg", className }: AuthCtaProps) {
         )}
       >
         <Link href={signedIn ? "/" : "/sign-up"}>
-          {signedIn ? "Open Frame" : "Start building"}
+          {signedIn ? "Open Molten" : "Start building"}
         </Link>
       </Button>
     </motion.div>

@@ -25,7 +25,7 @@ export default function ProjectError({ error, reset }: ProjectErrorProps) {
     >
       <StatusView
         title="This project didn't open"
-        description="Frame couldn't load it just now. Try again, or go back to your projects."
+        description="Molten couldn't load it just now. Try again, or go back to your projects."
       >
         <Button className="rounded-full px-5" onClick={reset}>
           Try again

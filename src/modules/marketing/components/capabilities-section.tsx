@@ -16,7 +16,7 @@ const CAPABILITIES = [
   {
     icon: MessageSquareTextIcon,
     title: "Change it by chatting",
-    body: "Ask for an edit in plain words and Frame updates the code.",
+    body: "Ask for an edit in plain words and Molten updates the code.",
   },
   {
     icon: Undo2Icon,
@@ -36,7 +36,7 @@ const CAPABILITIES = [
   {
     icon: AlertCircleIcon,
     title: "Failures you can act on",
-    body: "If a build fails, Frame says so in the chat instead of spinning.",
+    body: "If a build fails, Molten says so in the chat instead of spinning.",
   },
 ];
 

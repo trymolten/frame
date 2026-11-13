@@ -20,7 +20,7 @@ export function DashboardHome() {
           What should we build{firstName ? `, ${firstName}` : ""}?
         </h1>
         <p className="mt-4 max-w-xl text-center text-base text-pretty text-muted-foreground md:text-lg">
-          Describe an app or website. Frame writes the code and runs it in a
+          Describe an app or website. Molten writes the code and runs it in a
           live preview.
         </p>
         <div className="mt-9 w-full max-w-2xl">

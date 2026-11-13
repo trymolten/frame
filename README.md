@@ -47,7 +47,7 @@ The agent builds each app in a sandbox, picked by `SANDBOX_PROVIDER`:
 - `e2b`: E2B cloud sandboxes from the `frame-nextjs-template` template. Needs
   `E2B_API_KEY`.
 
-When `SANDBOX_PROVIDER` is unset, Frame uses E2B if `E2B_API_KEY` is set and
+When `SANDBOX_PROVIDER` is unset, Molten uses E2B if `E2B_API_KEY` is set and
 Docker otherwise. In compose, the app reaches Docker through the mounted
 `/var/run/docker.sock`, which gives it full control of your Docker engine.
 Use this setup only for local development.

@@ -11,7 +11,7 @@ export function BrandLogo({ className, size = 24 }: BrandLogoProps) {
   return (
     <Image
       src="/logo.png"
-      alt="Frame"
+      alt="Molten"
       width={size}
       height={size}
       priority

@@ -104,7 +104,7 @@ export function ProjectsBrowser({ filter }: { filter: ProjectsFilter }) {
           <p className="mt-1 text-sm text-muted-foreground">
             {filter === "starred"
               ? "Projects you starred, all in one place."
-              : "Everything you've built with Frame."}
+              : "Everything you've built with Molten."}
           </p>
         </div>
         <Button asChild size="sm" className="h-9 rounded-full px-4">
@@ -225,7 +225,7 @@ function EmptyResults({
   return (
     <ProjectsEmpty
       title="No projects yet"
-      description="Describe an app on the home page and Frame builds it for you."
+      description="Describe an app on the home page and Molten builds it for you."
       action={
         <Button asChild size="sm">
           <Link href={routes.home}>Start building</Link>

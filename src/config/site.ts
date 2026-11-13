@@ -1,4 +1,4 @@
-// Single source of truth for Frame's name, copy and brand colors. Used by
+// Single source of truth for Molten's name, copy and brand colors. Used by
 // metadata, generated icons and the marketing site.
 
 // Used until NEXT_PUBLIC_APP_URL is set for the deployment.
@@ -10,12 +10,12 @@ export function normalizeUrl(value: string) {
 }
 
 export const siteConfig = {
-  name: "Frame",
-  legalName: "Frame AI",
+  name: "Molten",
+  legalName: "Molten",
   url: normalizeUrl(process.env.NEXT_PUBLIC_APP_URL || FALLBACK_URL),
   tagline: "From a sentence to a running app.",
   description:
-    "Frame turns a plain-language prompt into a working Next.js app, runs it in a live sandbox and keeps every version. Built for developers and for teams.",
+    "Molten turns a plain-language prompt into a working Next.js app, runs it in a live sandbox and keeps every version. Built for developers and for teams.",
 } as const;
 
 export const brandColors = {

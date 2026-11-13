@@ -140,8 +140,8 @@
 }
 
 /*
- * Frame brand surface: Apple-style neutrals, hairline separators and one
- * accent (Frame Cobalt). Applied to every layout via .theme-brand.
+ * Molten brand surface: Apple-style neutrals, hairline separators and one
+ * accent (Molten Cobalt). Applied to every layout via .theme-brand.
  */
 .theme-brand {
   --radius: 0.75rem;

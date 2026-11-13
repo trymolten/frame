@@ -13,7 +13,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           className="flex w-fit items-center gap-2 rounded-md text-lg font-semibold tracking-tight outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           <BrandLogo size={28} />
-          Frame
+          Molten
         </Link>
         <div className="flex flex-1 items-center justify-center py-10">
           {children}

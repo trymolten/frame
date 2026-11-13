@@ -11,7 +11,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 // route group has its own root layout), so this page brings its own document.
 // Next adds the noindex tag to 404 responses itself.
 export const metadata: Metadata = {
-  title: "Page not found | Frame AI",
+  title: "Page not found | Molten",
 };
 
 export default function GlobalNotFound() {

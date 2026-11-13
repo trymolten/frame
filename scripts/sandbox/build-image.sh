@@ -6,7 +6,7 @@ set -eu
 
 cd "$(dirname "$0")/../.."
 exec "${SANDBOX_DOCKER_BIN:-docker}" build \
-  --tag frame-nextjs-template \
+  --tag molten-nextjs-template \
   --file sandbox/nextjs/e2b.Dockerfile \
   "$@" \
   sandbox/nextjs

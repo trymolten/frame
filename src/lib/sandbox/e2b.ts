@@ -1,5 +1,7 @@
 import { Sandbox as E2BSandbox } from "@e2b/code-interpreter";
 
+import { E2B_TEMPLATE_ID, SANDBOX_TEMPLATE } from "@/constants/sandbox";
+
 import type {
   Sandbox,
   SandboxProvider,
@@ -46,8 +48,15 @@ class E2BSandboxAdapter implements Sandbox {
 
 export const e2bSandboxProvider: SandboxProvider = {
   name: "e2b",
+  // Our template is addressed by its E2B id; any other name passes through.
   create: async (template) =>
-    new E2BSandboxAdapter(await E2BSandbox.create(template)),
+    new E2BSandboxAdapter(
+      await E2BSandbox.create(
+        template === SANDBOX_TEMPLATE
+          ? process.env.E2B_TEMPLATE || E2B_TEMPLATE_ID
+          : template
+      )
+    ),
   connect: async (sandboxId) =>
     new E2BSandboxAdapter(await E2BSandbox.connect(sandboxId)),
 };

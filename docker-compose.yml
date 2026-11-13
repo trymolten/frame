@@ -5,18 +5,18 @@
 #
 # Secrets come from .env (see .env.example). Set APP_PORT, INNGEST_PORT or
 # POSTGRES_PORT there (or in the shell) if the default host ports are taken.
-name: frame
+name: molten
 
 x-app: &app
   build: .
-  image: frame-app-dev
+  image: molten-app-dev
   env_file:
     - path: .env
       required: false
   # Overrides .env, whose URLs point at services on the host.
   environment:
-    DATABASE_URL: postgresql://frame:frame@postgres:5432/frame?schema=public
-    DIRECT_URL: postgresql://frame:frame@postgres:5432/frame?schema=public
+    DATABASE_URL: postgresql://molten:molten@postgres:5432/molten?schema=public
+    DIRECT_URL: postgresql://molten:molten@postgres:5432/molten?schema=public
     NEXT_PUBLIC_APP_URL: http://localhost:${APP_PORT:-3000}
     INNGEST_DEV: "1"
     INNGEST_BASE_URL: http://inngest:8288
@@ -28,15 +28,15 @@ services:
   postgres:
     image: postgres:17
     environment:
-      POSTGRES_USER: frame
-      POSTGRES_PASSWORD: frame
-      POSTGRES_DB: frame
+      POSTGRES_USER: molten
+      POSTGRES_PASSWORD: molten
+      POSTGRES_DB: molten
     ports:
       - ${POSTGRES_PORT:-5432}:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U frame -d frame"]
+      test: ["CMD-SHELL", "pg_isready -U molten -d molten"]
       interval: 2s
       timeout: 5s
       retries: 30
@@ -58,7 +58,7 @@ services:
   # Only builds the sandbox image (sandbox/nextjs/e2b.Dockerfile); the app
   # starts one container from it per agent run.
   sandbox-image:
-    image: frame-nextjs-template
+    image: molten-nextjs-template
     build:
       context: ./sandbox/nextjs
       dockerfile: e2b.Dockerfile

@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AuthCta } from "@/modules/marketing/components/auth-cta";
 import { ProductDemo } from "@/modules/marketing/components/product-demo";
-import { LiquidMetalFrame } from "@/modules/marketing/components/liquid-metal-frame";
+import { LiquidMetalBezel } from "@/modules/marketing/components/liquid-metal-bezel";
 
 export function Hero() {
   const windowRef = useRef<HTMLDivElement>(null);
@@ -58,9 +58,9 @@ export function Hero() {
             style={reduceMotion ? undefined : { scale, rotateX }}
             className="origin-top will-change-transform"
           >
-            <LiquidMetalFrame>
+            <LiquidMetalBezel>
               <ProductDemo />
-            </LiquidMetalFrame>
+            </LiquidMetalBezel>
           </motion.div>
         </div>
       </div>

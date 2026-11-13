@@ -47,8 +47,9 @@ The agent builds each app in a sandbox, picked by `SANDBOX_PROVIDER`:
   containers stop when `SANDBOX_TIMEOUT` passes. Outside compose, build the
   image once with `make sandbox-image`. To check the provider, run
   `make sandbox-test`. To remove leftover containers, run `make sandbox-clean`.
-- `e2b`: E2B cloud sandboxes from the `frame-nextjs-template` template. Needs
-  `E2B_API_KEY`.
+- `e2b`: E2B cloud sandboxes from the `molten-nextjs-template` template
+  (started by its id in `sandbox/nextjs/e2b.toml`; set `E2B_TEMPLATE` to use
+  another). Needs `E2B_API_KEY`.
 
 When `SANDBOX_PROVIDER` is unset, Molten uses E2B if `E2B_API_KEY` is set and
 Docker otherwise. In compose, the app reaches Docker through the mounted

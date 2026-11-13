@@ -8,6 +8,7 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 
 import type { AppRouter } from "./routers/_app";
+import { normalizeUrl } from "@/config/site";
 import { makeQueryClient } from "./query-client";
 
 export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
@@ -29,11 +30,7 @@ function getUrl() {
   const base = (() => {
     if (typeof window !== "undefined") return "";
     const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    if (appUrl) {
-      // Accept both "example.com" and "https://example.com".
-      return /^https?:\/\//.test(appUrl) ? appUrl : `https://${appUrl}`;
-    }
-    return "http://localhost:3000";
+    return appUrl ? normalizeUrl(appUrl) : "http://localhost:3000";
   })();
   return `${base}/api/trpc`;
 }

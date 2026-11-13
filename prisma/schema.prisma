@@ -30,6 +30,8 @@ model Message {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   fragment Fragment?
+
+  @@index([projectId, createdAt])
 }
 
 model Fragment {
@@ -45,16 +47,36 @@ model Fragment {
   message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
+enum ProjectVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum ProjectStatus {
+  IDLE
+  GENERATING
+  READY
+  FAILED
+}
+
 model Project {
-  id          String  @id @default(uuid())
-  name        String
-  description String?
-  userId      String
+  id           String            @id @default(uuid())
+  name         String
+  description  String?
+  userId       String
+  starred      Boolean           @default(false)
+  visibility   ProjectVisibility @default(PUBLIC)
+  status       ProjectStatus     @default(IDLE)
+  lastOpenedAt DateTime          @default(now())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   messages Message[]
+
+  @@index([userId, updatedAt(sort: Desc)])
+  @@index([userId, lastOpenedAt(sort: Desc)])
+  @@index([userId, starred, updatedAt(sort: Desc)])
 }
 
 model Usage {

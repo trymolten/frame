@@ -70,7 +70,7 @@ const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
           <DropdownMenuItem asChild>
             <Link href={routes.website}>
               <GlobeIcon />
-              Frame website
+              Molten website
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

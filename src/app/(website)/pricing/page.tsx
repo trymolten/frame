@@ -18,13 +18,13 @@ import { FREE_USAGE_POINTS, PRO_USAGE_POINTS } from "@/constants/usage";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Start free with Frame. Upgrade to Pro for more monthly credits, or bring your team to a shared workspace.",
+    "Start free with Molten. Upgrade to Pro for more monthly credits, or bring your team to a shared workspace.",
 };
 
 const PLANS = [
   {
     name: "Free",
-    description: "For trying Frame and small experiments.",
+    description: "For trying Molten and small experiments.",
     features: [
       `${FREE_USAGE_POINTS} credits every 30 days`,
       "Personal workspace",

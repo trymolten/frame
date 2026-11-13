@@ -26,7 +26,7 @@ export default function AuthRootLayout({
           suppressHydrationWarning
           className={cn(
             displayFont.variable,
-            "theme-frame min-h-screen bg-background font-sans antialiased"
+            "theme-brand min-h-screen bg-background font-sans antialiased"
           )}
         >
           <ThemeProvider

@@ -4,7 +4,7 @@ const STEPS = [
     body: "Say what you want in plain words. Add as much or as little detail as you like.",
   },
   {
-    title: "Frame builds it",
+    title: "Molten builds it",
     body: "An agent writes the code in an isolated cloud sandbox, installs what it needs and starts the app.",
   },
   {

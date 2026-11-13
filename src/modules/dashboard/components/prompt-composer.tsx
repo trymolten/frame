@@ -143,7 +143,7 @@ export function PromptComposer() {
             maxLength={MAX_LENGTH}
             disabled={isBusy}
             aria-label="Describe what you want to build"
-            placeholder="Ask Frame to build a dashboard for tracking my workouts…"
+            placeholder="Ask Molten to build a dashboard for tracking my workouts…"
             onChange={(event) => setValue(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {

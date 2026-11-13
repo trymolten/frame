@@ -60,7 +60,7 @@ export default function ContactPage() {
               <div className="absolute -top-1 -right-1 h-3 w-3 animate-pulse rounded-full bg-green-500"></div>
             </div>
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-2xl font-bold text-transparent">
-              Frame AI
+              Molten
             </span>
           </Link>
 
@@ -90,7 +90,7 @@ export default function ContactPage() {
             </h1>
             <p className="mx-auto max-w-3xl text-xl text-gray-600">
               Ready to build interactive web experiences? Our team is here to
-              help you get started with Frame AI.
+              help you get started with Molten.
             </p>
           </motion.div>
 
@@ -187,7 +187,7 @@ export default function ContactPage() {
                     value={formData.message}
                     onChange={handleChange}
                     className="mt-2 min-h-[120px]"
-                    placeholder="Tell us about your project ideas and how Frame AI can help..."
+                    placeholder="Tell us about your project ideas and how Molten can help..."
                   />
                 </div>
 
@@ -243,7 +243,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="mb-1 font-semibold">Office</h3>
-                      <p className="text-gray-600">Frame AI Labs</p>
+                      <p className="text-gray-600">Molten</p>
                       <p className="text-gray-600">123 Innovation Drive</p>
                       <p className="text-gray-600">San Francisco, CA 94105</p>
                     </div>
@@ -252,7 +252,7 @@ export default function ContactPage() {
               </div>
 
               <div className="rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-purple-50 p-8">
-                <h3 className="mb-4 text-xl font-bold">Why Choose Frame AI?</h3>
+                <h3 className="mb-4 text-xl font-bold">Why Choose Molten?</h3>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <div className="h-2 w-2 rounded-full bg-blue-500"></div>

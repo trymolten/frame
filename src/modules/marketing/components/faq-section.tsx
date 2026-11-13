@@ -7,14 +7,14 @@ import {
 
 const FAQS = [
   {
-    question: "What can Frame build?",
+    question: "What can Molten build?",
     answer:
       "Web apps and websites: dashboards, landing pages, internal tools and prototypes. Each project is a Next.js app written in TypeScript with Tailwind CSS and shadcn/ui.",
   },
   {
     question: "Do I own the code?",
     answer:
-      "Yes. You can read every file Frame writes. Pushing a project to your own GitHub repository is coming soon.",
+      "Yes. You can read every file Molten writes. Pushing a project to your own GitHub repository is coming soon.",
   },
   {
     question: "Where does my app run?",
@@ -27,14 +27,14 @@ const FAQS = [
       "Each message that builds or changes your app uses one credit. The Free plan includes a monthly allowance and Pro includes far more. Credits reset 30 days after you first use them.",
   },
   {
-    question: "Can my team use Frame together?",
+    question: "Can my team use Molten together?",
     answer:
       "Organizations are coming soon: shared projects, admin, member and viewer roles, and credits that belong to the team rather than one person.",
   },
   {
     question: "What happens if a build fails?",
     answer:
-      "Frame stops, explains in the chat and marks the project as failed, so you can rephrase and try again.",
+      "Molten stops, explains in the chat and marks the project as failed, so you can rephrase and try again.",
   },
 ];
 

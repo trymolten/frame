@@ -124,7 +124,9 @@ function WorkspaceMenu() {
   const { data: usage } = useQuery(trpc.usage.getStatus.queryOptions());
 
   const firstName = user?.firstName?.trim();
-  const workspace = firstName ? `${firstName}'s Frame` : "My Frame";
+  const workspace = firstName
+    ? `${firstName}'s workspace`
+    : "Personal workspace";
   const initial = (firstName?.[0] ?? "F").toUpperCase();
 
   return (
@@ -199,7 +201,7 @@ function WorkspaceMenu() {
             <DropdownMenuItem asChild>
               <Link href={routes.website}>
                 <GlobeIcon />
-                Frame website
+                Molten website
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

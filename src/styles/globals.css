@@ -140,10 +140,10 @@
 }
 
 /*
- * Frame brand surface: Apple-style neutrals, hairline separators and one
- * accent (Frame Cobalt). Applied to every layout via .theme-frame.
+ * Molten brand surface: Apple-style neutrals, hairline separators and one
+ * accent (Molten Cobalt). Applied to every layout via .theme-brand.
  */
-.theme-frame {
+.theme-brand {
   --radius: 0.75rem;
   --background: #fbfbfd;
   --foreground: #1d1d1f;
@@ -175,9 +175,9 @@
   --glow-silver: #c9ced8;
 }
 
-.dark .theme-frame,
-.theme-frame.dark,
-.dark.theme-frame {
+.dark .theme-brand,
+.theme-brand.dark,
+.dark.theme-brand {
   --background: #000000;
   --foreground: #f5f5f7;
   --card: #1c1c1e;
@@ -205,7 +205,7 @@
 }
 
 /* Brand glow (cobalt, iris, silver) rising behind the dashboard composer. */
-.frame-glow {
+.brand-glow {
   background:
     radial-gradient(
       60% 50% at 28% 80%,
@@ -226,17 +226,17 @@
 }
 
 /* Blended colours read dim on a dark canvas; push them so the glow carries. */
-.dark .frame-glow {
+.dark .brand-glow {
   filter: blur(56px) saturate(1.35) brightness(1.15);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .frame-glow {
-    animation: frame-glow-rise 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  .brand-glow {
+    animation: brand-glow-rise 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
 
-@keyframes frame-glow-rise {
+@keyframes brand-glow-rise {
   from {
     opacity: 0;
     transform: translateY(12%);

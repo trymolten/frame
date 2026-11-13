@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { FrameLogo } from "@/components/frame-logo";
+import { BrandLogo } from "@/components/brand-logo";
 import {
   Empty,
   EmptyContent,
@@ -28,7 +28,7 @@ export function StatusView({
     <Empty className={cn("px-5", className)}>
       <EmptyHeader className="gap-3">
         <EmptyMedia className="mb-3">
-          <FrameLogo size={36} />
+          <BrandLogo size={36} />
         </EmptyMedia>
         <h1 className="text-2xl font-semibold tracking-[-0.02em] text-balance">
           {title}

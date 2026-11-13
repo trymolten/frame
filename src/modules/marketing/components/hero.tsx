@@ -34,7 +34,7 @@ export function Hero() {
             From a sentence to a running app.
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-[19px] leading-[1.45] text-pretty text-muted-foreground sm:text-[21px]">
-            Frame writes real Next.js code, runs it in a live sandbox and keeps
+            Molten writes real Next.js code, runs it in a live sandbox and keeps
             every version. Build on your own, or with your whole team.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-3">

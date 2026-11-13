@@ -17,7 +17,7 @@ const FEATURES = [
   {
     icon: FileCodeIcon,
     title: "Read every file",
-    body: "Browse the project tree and the exact code Frame wrote, line by line.",
+    body: "Browse the project tree and the exact code Molten wrote, line by line.",
   },
   {
     icon: TerminalIcon,
@@ -79,7 +79,7 @@ export function DevelopersSection() {
 function CodeWindow() {
   return (
     <figure
-      aria-label="Example of a file Frame wrote"
+      aria-label="Example of a file Molten wrote"
       className="overflow-hidden rounded-2xl border bg-card shadow-[0_24px_64px_-32px_rgb(0_0_0/0.35)] lg:sticky lg:top-28 lg:mt-12"
     >
       <div className="flex items-center gap-2 border-b bg-muted/60 px-4 py-2.5">

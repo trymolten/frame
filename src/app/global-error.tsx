@@ -16,11 +16,11 @@ interface GlobalErrorProps {
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html lang="en">
-      <body className="theme-frame min-h-svh bg-background font-sans text-foreground antialiased">
-        <title>Something went wrong | Frame AI</title>
+      <body className="theme-brand min-h-svh bg-background font-sans text-foreground antialiased">
+        <title>Something went wrong | Molten</title>
         <main className="flex min-h-svh">
           <StatusView
-            title="Frame didn't load"
+            title="Molten didn't load"
             description={
               <>
                 Try again in a moment. If it keeps happening, reload the page.

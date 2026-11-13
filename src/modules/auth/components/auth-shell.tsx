@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpIcon } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { FrameLogo } from "@/components/frame-logo";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
@@ -12,8 +12,8 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           href="/"
           className="flex w-fit items-center gap-2 rounded-md text-lg font-semibold tracking-tight outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
-          <FrameLogo size={28} />
-          Frame
+          <BrandLogo size={28} />
+          Molten
         </Link>
         <div className="flex flex-1 items-center justify-center py-10">
           {children}
@@ -24,7 +24,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <Card className="relative isolate h-full items-center justify-center gap-0 overflow-hidden rounded-3xl px-12 py-0 shadow-none">
           <div
             aria-hidden
-            className="frame-glow absolute inset-x-[-15%] bottom-[-10%] -z-10 h-[90%]"
+            className="brand-glow absolute inset-x-[-15%] bottom-[-10%] -z-10 h-[90%]"
           />
           <p className="max-w-md text-center text-4xl font-semibold tracking-tight text-balance">
             Describe it. Watch it get built.

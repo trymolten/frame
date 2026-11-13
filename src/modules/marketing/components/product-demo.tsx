@@ -95,8 +95,8 @@ export function ProductDemo() {
   return (
     <div ref={ref} className="relative">
       <p className="sr-only">
-        Animation: someone asks Frame to build a habit tracker with streaks and
-        a weekly chart. Frame plans the screens, writes the code, installs a
+        Animation: someone asks Molten to build a habit tracker with streaks and
+        a weekly chart. Molten plans the screens, writes the code, installs a
         charting library and starts the app, which then appears in a live
         preview.
       </p>
@@ -257,7 +257,7 @@ function PreviewPane({
   );
 }
 
-// A small stand-in for "the app Frame generated", drawn with plain elements.
+// A small stand-in for "the app Molten generated", drawn with plain elements.
 function GeneratedApp({ reduceMotion }: { reduceMotion: boolean }) {
   return (
     <div className="space-y-5">

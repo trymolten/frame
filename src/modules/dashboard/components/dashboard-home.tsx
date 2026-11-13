@@ -14,13 +14,13 @@ export function DashboardHome() {
       <section className="relative isolate flex min-h-[calc(100svh-6rem)] flex-col items-center justify-center overflow-hidden px-5 pt-20 pb-32">
         <div
           aria-hidden
-          className="frame-glow pointer-events-none absolute inset-x-[-15%] bottom-[-4%] -z-10 h-[90%]"
+          className="brand-glow pointer-events-none absolute inset-x-[-15%] bottom-[-4%] -z-10 h-[90%]"
         />
         <h1 className="max-w-3xl text-center text-4xl leading-[1.1] font-semibold tracking-[-0.025em] text-balance md:text-5xl">
           What should we build{firstName ? `, ${firstName}` : ""}?
         </h1>
         <p className="mt-4 max-w-xl text-center text-base text-pretty text-muted-foreground md:text-lg">
-          Describe an app or website. Frame writes the code and runs it in a
+          Describe an app or website. Molten writes the code and runs it in a
           live preview.
         </p>
         <div className="mt-9 w-full max-w-2xl">

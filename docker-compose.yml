@@ -20,6 +20,9 @@ x-app: &app
     NEXT_PUBLIC_APP_URL: http://localhost:${APP_PORT:-3000}
     INNGEST_DEV: "1"
     INNGEST_BASE_URL: http://inngest:8288
+    # Ollama runs on the host (Docker on macOS can't use the GPU), and the
+    # Inngest container is what calls it.
+    OLLAMA_BASE_URL: http://host.docker.internal:11434/v1
 
 services:
   postgres:

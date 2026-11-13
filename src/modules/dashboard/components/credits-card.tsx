@@ -47,7 +47,7 @@ export function CreditsCard() {
         <Progress
           value={percent}
           aria-label="Credits remaining"
-          className="h-1.5 bg-muted [&>[data-slot=progress-indicator]]:bg-[linear-gradient(90deg,var(--glow-blue),var(--glow-pink),var(--glow-orange))]"
+          className="h-1.5 bg-muted [&>[data-slot=progress-indicator]]:bg-[linear-gradient(90deg,var(--glow-cobalt),var(--glow-iris),var(--glow-silver))]"
         />
         <CardDescription className="text-xs">{resets}</CardDescription>
       </CardContent>

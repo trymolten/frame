@@ -128,7 +128,7 @@ function WorkspaceMenu() {
               className="data-[state=open]:bg-sidebar-accent"
             >
               <Avatar className="size-7 rounded-lg">
-                <AvatarFallback className="rounded-lg bg-[linear-gradient(135deg,var(--glow-blue),var(--glow-pink)_55%,var(--glow-orange))] text-[13px] font-semibold text-white">
+                <AvatarFallback className="rounded-lg bg-[linear-gradient(135deg,var(--glow-cobalt),var(--glow-iris)_55%,var(--glow-silver))] text-[13px] font-semibold text-white">
                   {initial}
                 </AvatarFallback>
               </Avatar>

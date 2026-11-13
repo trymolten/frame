@@ -17,16 +17,21 @@ import {
 } from "@/components/ui/sheet";
 import { AuthCta, SignInLink } from "@/modules/marketing/components/auth-cta";
 import { BrandMark } from "@/modules/marketing/components/brand-mark";
+import { useWebsiteHomeHref } from "@/modules/marketing/hooks/use-website-home";
 
-export const NAV_LINKS = [
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#developers", label: "Developers" },
-  { href: "/#teams", label: "Teams" },
-  { href: "/pricing", label: "Pricing" },
-] as const;
+// Section anchors live on the website home, which is /home for signed-in users.
+export function navLinks(websiteHome: string) {
+  return [
+    { href: `${websiteHome}#how-it-works`, label: "How it works" },
+    { href: `${websiteHome}#developers`, label: "Developers" },
+    { href: `${websiteHome}#teams`, label: "Teams" },
+    { href: "/pricing", label: "Pricing" },
+  ];
+}
 
 export function SiteHeader() {
   const { isScrolled } = useScroll(8);
+  const websiteHome = useWebsiteHomeHref();
 
   return (
     <header
@@ -39,7 +44,8 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-5 md:px-8">
         <Link
-          href="/"
+          href={websiteHome}
+          aria-label={`${siteConfig.name} home`}
           className="flex items-center gap-2 rounded-full outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
         >
           <BrandMark size={26} />
@@ -50,7 +56,7 @@ export function SiteHeader() {
 
         <nav aria-label="Main" className="hidden md:block">
           <ul className="flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
+            {navLinks(websiteHome).map((link) => (
               <li key={link.href}>
                 <Button
                   asChild
@@ -68,14 +74,14 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <SignInLink className="hidden sm:inline-flex" />
           <AuthCta size="sm" />
-          <MobileNav />
+          <MobileNav websiteHome={websiteHome} />
         </div>
       </div>
     </header>
   );
 }
 
-function MobileNav() {
+function MobileNav({ websiteHome }: { websiteHome: string }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -97,7 +103,7 @@ function MobileNav() {
         </SheetHeader>
         <nav aria-label="Mobile" className="px-4">
           <ul className="divide-y divide-border">
-            {NAV_LINKS.map((link) => (
+            {navLinks(websiteHome).map((link) => (
               <li key={link.href}>
                 <SheetClose asChild>
                   <Link

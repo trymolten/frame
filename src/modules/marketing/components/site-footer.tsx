@@ -1,43 +1,50 @@
+"use client";
+
 import Link from "next/link";
 
 import { siteConfig } from "@/config/site";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { BrandMark } from "@/modules/marketing/components/brand-mark";
+import { useWebsiteHomeHref } from "@/modules/marketing/hooks/use-website-home";
 
-const FOOTER_GROUPS = [
-  {
-    title: "Product",
-    links: [
-      { href: "/#how-it-works", label: "How it works" },
-      { href: "/#developers", label: "For developers" },
-      { href: "/#teams", label: "For teams" },
-      { href: "/pricing", label: "Pricing" },
-    ],
-  },
-  {
-    title: "Account",
-    links: [
-      { href: "/sign-in", label: "Sign in" },
-      { href: "/sign-up", label: "Create an account" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { href: "/privacy-policy", label: "Privacy policy" },
-      { href: "/term-of-service", label: "Terms of service" },
-    ],
-  },
-] as const;
+function footerGroups(websiteHome: string) {
+  return [
+    {
+      title: "Product",
+      links: [
+        { href: `${websiteHome}#how-it-works`, label: "How it works" },
+        { href: `${websiteHome}#developers`, label: "For developers" },
+        { href: `${websiteHome}#teams`, label: "For teams" },
+        { href: "/pricing", label: "Pricing" },
+      ],
+    },
+    {
+      title: "Account",
+      links: [
+        { href: "/sign-in", label: "Sign in" },
+        { href: "/sign-up", label: "Create an account" },
+      ],
+    },
+    {
+      title: "Legal",
+      links: [
+        { href: "/privacy-policy", label: "Privacy policy" },
+        { href: "/term-of-service", label: "Terms of service" },
+      ],
+    },
+  ];
+}
 
 export function SiteFooter() {
+  const websiteHome = useWebsiteHomeHref();
+
   return (
     <footer className="border-t bg-muted/40">
       <div className="mx-auto max-w-6xl px-5 pt-14 pb-10 md:px-8">
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div className="max-w-xs">
-            <Link href="/" className="inline-flex items-center gap-2">
+            <Link href={websiteHome} className="inline-flex items-center gap-2">
               <BrandMark size={24} />
               <span className="font-semibold tracking-[-0.02em]">
                 {siteConfig.name}
@@ -47,7 +54,7 @@ export function SiteFooter() {
               {siteConfig.tagline}
             </p>
           </div>
-          {FOOTER_GROUPS.map((group) => (
+          {footerGroups(websiteHome).map((group) => (
             <nav key={group.title} aria-label={group.title}>
               <h2 className="text-xs font-semibold text-foreground">
                 {group.title}

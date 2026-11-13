@@ -17,9 +17,16 @@ const isAuthEntryRoute = createRouteMatcher(["/sign-in", "/sign-up"]);
 export default clerkMiddleware(
   async (auth, req) => {
     const { userId } = await auth();
+    const { pathname } = req.nextUrl;
 
     if (userId && isAuthEntryRoute(req)) {
       return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    // Like Lovable: signed-in users get their dashboard at the root URL,
+    // signed-out visitors get the marketing homepage.
+    if (userId && pathname === "/") {
+      return NextResponse.rewrite(new URL("/dashboard", req.url));
     }
 
     if (isProtectedRoute(req)) {

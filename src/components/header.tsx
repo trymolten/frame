@@ -66,17 +66,22 @@ const Header = () => {
           </div>
         </SignedOut>
         <SignedIn>
-          <UserButton
-            showName
-            appearance={{
-              elements: {
-                userButtonBox: "rounded-md!",
-                userButtonTrigger: "rounded-md!",
-                userButtonAvatarBox: "rounded-md! size-8!",
-              },
-              theme: theme === "dark" ? dark : undefined,
-            }}
-          />
+          <div className="flex items-center gap-3">
+            <Button asChild size="sm">
+              <Link href="/">Open dashboard</Link>
+            </Button>
+            <UserButton
+              showName
+              appearance={{
+                elements: {
+                  userButtonBox: "rounded-md!",
+                  userButtonTrigger: "rounded-md!",
+                  userButtonAvatarBox: "rounded-md! size-8!",
+                },
+                theme: theme === "dark" ? dark : undefined,
+              }}
+            />
+          </div>
         </SignedIn>
       </div>
     </header>

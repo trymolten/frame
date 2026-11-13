@@ -9,7 +9,8 @@ import { clerkProviderProps } from "@/config/clerk";
 import { siteMetadata, siteViewport } from "@/config/metadata";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme/theme-provider";
-import { Header } from "@/components/header";
+import { SiteHeader } from "@/modules/marketing/components/site-header";
+import { SiteFooter } from "@/modules/marketing/components/site-footer";
 
 export const viewport = siteViewport;
 export const metadata = siteMetadata;
@@ -24,7 +25,10 @@ export default function WebsiteRootLayout({
       <html lang="en" suppressHydrationWarning>
         <body
           suppressHydrationWarning
-          className={cn(displayFont.variable, "min-h-screen antialiased")}
+          className={cn(
+            displayFont.variable,
+            "theme-frame flex min-h-screen flex-col bg-background font-sans text-foreground antialiased"
+          )}
         >
           <ThemeProvider
             attribute="class"
@@ -32,8 +36,11 @@ export default function WebsiteRootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Header />
-            {children}
+            <SiteHeader />
+            <main id="main" className="flex-1">
+              {children}
+            </main>
+            <SiteFooter />
             <Toaster />
           </ThemeProvider>
           {process.env.NODE_ENV === "production" && (

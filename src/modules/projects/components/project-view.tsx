@@ -132,6 +132,8 @@ const ProjectView = ({ projectId }: ProjectViewProps) => {
                   </Button>
                 )}
                 <UserButton
+                  userProfileMode="navigation"
+                  userProfileUrl={routes.accountSettings}
                   appearance={{
                     elements: {
                       userButtonBox: "rounded-md!",

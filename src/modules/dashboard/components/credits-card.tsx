@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { formatDistanceStrict } from "date-fns";
 
 import { useTRPC } from "@/trpc/client";
+import { routes } from "@/lib/routes";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { describeCredits } from "@/modules/dashboard/lib/format";
 
 export function CreditsCard() {
   const trpc = useTRPC();
@@ -27,11 +28,7 @@ export function CreditsCard() {
   }
 
   const isFree = usage.plan === "free";
-  const percent = usage.total > 0 ? (usage.remaining / usage.total) * 100 : 0;
-  const resets =
-    usage.msBeforeReset > 0
-      ? `Resets in ${formatDistanceStrict(0, usage.msBeforeReset)}`
-      : "Credits reset 30 days after first use";
+  const { percentLeft, resetLabel } = describeCredits(usage);
 
   return (
     <Card className="gap-3 py-3 shadow-none">
@@ -45,16 +42,16 @@ export function CreditsCard() {
       </CardHeader>
       <CardContent className="space-y-2 px-3">
         <Progress
-          value={percent}
+          value={percentLeft}
           aria-label="Credits remaining"
           className="h-1.5 bg-muted [&>[data-slot=progress-indicator]]:bg-[linear-gradient(90deg,var(--glow-blue),var(--glow-pink),var(--glow-orange))]"
         />
-        <CardDescription className="text-xs">{resets}</CardDescription>
+        <CardDescription className="text-xs">{resetLabel}</CardDescription>
       </CardContent>
       {isFree && (
         <CardFooter className="px-3">
           <Button asChild size="sm" className="w-full">
-            <Link href="/pricing">Upgrade to Pro</Link>
+            <Link href={routes.pricing}>Upgrade to Pro</Link>
           </Button>
         </CardFooter>
       )}

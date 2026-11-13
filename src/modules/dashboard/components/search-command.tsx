@@ -8,6 +8,7 @@ import {
   FolderIcon,
   HouseIcon,
   MoonIcon,
+  SettingsIcon,
   StarIcon,
   SunIcon,
 } from "lucide-react";
@@ -118,6 +119,13 @@ export function SearchCommand({ open, onOpenChange }: SearchCommandProps) {
               >
                 <StarIcon />
                 Starred projects
+              </CommandItem>
+              <CommandItem
+                value="settings"
+                onSelect={() => go(routes.accountSettings)}
+              >
+                <SettingsIcon />
+                Settings
               </CommandItem>
               <CommandItem
                 value="toggle-theme"

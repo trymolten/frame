@@ -95,6 +95,8 @@ export function AppSidebar() {
           <CreditsCard />
           <UserButton
             showName
+            userProfileMode="navigation"
+            userProfileUrl={routes.accountSettings}
             appearance={{
               elements: {
                 rootBox: "w-full",
@@ -115,7 +117,7 @@ export function AppSidebar() {
 
 function WorkspaceMenu() {
   const { user } = useUser();
-  const { openUserProfile, signOut } = useClerk();
+  const { signOut } = useClerk();
   const { theme, setTheme } = useTheme();
   const trpc = useTRPC();
   const { data: usage } = useQuery(trpc.usage.getStatus.queryOptions());
@@ -161,14 +163,16 @@ function WorkspaceMenu() {
               </span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => openUserProfile()}>
-              <SettingsIcon />
-              Account settings
+            <DropdownMenuItem asChild>
+              <Link href={routes.accountSettings}>
+                <SettingsIcon />
+                Account settings
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={routes.pricing}>
+              <Link href={routes.usageSettings}>
                 <CreditCardIcon />
-                Plans and credits
+                Usage and plan
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSub>

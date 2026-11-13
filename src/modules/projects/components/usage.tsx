@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CrownIcon } from "lucide-react";
 import { formatDistanceStrict } from "date-fns";
 
+import { routes } from "@/lib/routes";
 import { Button } from "@/components/ui/button";
 import type { UsageStatus } from "@/modules/dashboard/types";
 
@@ -29,7 +30,7 @@ export function Usage({ usage }: Readonly<{ usage: UsageStatus }>) {
         </div>
         {!isPro && (
           <Button asChild size="sm" variant="outline" className="ml-auto">
-            <Link href="/pricing">
+            <Link href={routes.pricing}>
               <CrownIcon /> Upgrade
             </Link>
           </Button>

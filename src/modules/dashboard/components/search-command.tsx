@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { useTRPC } from "@/trpc/client";
+import { routes } from "@/lib/routes";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import {
   CommandDialog,
@@ -85,7 +86,7 @@ export function SearchCommand({ open, onOpenChange }: SearchCommandProps) {
               <CommandItem
                 key={project.id}
                 value={project.id}
-                onSelect={() => go(`/projects/${project.id}`)}
+                onSelect={() => go(routes.project(project.id))}
               >
                 <FolderIcon />
                 <span className="truncate">{project.name}</span>
@@ -100,16 +101,23 @@ export function SearchCommand({ open, onOpenChange }: SearchCommandProps) {
           <>
             <CommandSeparator />
             <CommandGroup heading="Go to">
-              <CommandItem value="home" onSelect={() => go("/")}>
+              <CommandItem value="home" onSelect={() => go(routes.home)}>
                 <HouseIcon />
                 Home
               </CommandItem>
               <CommandItem
                 value="all-projects"
-                onSelect={() => go("/projects")}
+                onSelect={() => go(routes.projects)}
               >
                 <FolderIcon />
                 All projects
+              </CommandItem>
+              <CommandItem
+                value="starred-projects"
+                onSelect={() => go(routes.starredProjects)}
+              >
+                <StarIcon />
+                Starred projects
               </CommandItem>
               <CommandItem
                 value="toggle-theme"

@@ -14,6 +14,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
+import { routes } from "@/lib/routes";
 import { useAutosizeTextarea } from "@/hooks/use-autosize-textarea";
 import { Button } from "@/components/ui/button";
 import {
@@ -91,14 +92,14 @@ export function PromptComposer() {
           queryKey: trpc.projects.list.pathKey(),
         });
         queryClient.invalidateQueries(trpc.usage.getStatus.queryFilter());
-        router.push(`/projects/${project.id}`);
+        router.push(routes.project(project.id));
       },
       onError: (error) => {
         if (error.data?.code === "TOO_MANY_REQUESTS") {
           toast.error(error.message, {
             action: {
               label: "View plans",
-              onClick: () => router.push("/pricing"),
+              onClick: () => router.push(routes.pricing),
             },
           });
           return;

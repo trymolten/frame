@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
+import { routes } from "@/lib/routes";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -59,7 +60,7 @@ const ProjectMessageForm = ({ projectId }: ProjectMessageFormProps) => {
           toast.error(error.message, {
             action: {
               label: "View plans",
-              onClick: () => router.push("/pricing"),
+              onClick: () => router.push(routes.pricing),
             },
           });
           return;

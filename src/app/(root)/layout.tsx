@@ -2,7 +2,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
-import { Roboto } from "next/font/google";
+import { Instrument_Sans } from "next/font/google";
 import "@/styles/globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
@@ -12,10 +12,9 @@ import { auth } from "@clerk/nextjs/server";
 import { TRPCReactProvider } from "@/trpc/client";
 import { clerkProviderProps } from "@/config/clerk";
 
-const roboto = Roboto({
+const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
-  variable: "--font-roboto",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-display",
 });
 
 export const viewport: Viewport = {
@@ -297,7 +296,10 @@ export default async function RootLayout({
         <html lang="en" suppressHydrationWarning>
           <body
             suppressHydrationWarning
-            className={cn(roboto.variable, "min-h-screen antialiased")}
+            className={cn(
+              instrumentSans.variable,
+              "theme-frame min-h-screen bg-background font-sans antialiased"
+            )}
           >
             <ThemeProvider
               attribute="class"

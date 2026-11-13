@@ -15,8 +15,23 @@ the code sandbox image, which takes a few minutes. If a port is taken, set
 dependencies, run `docker compose up --build -V`. Edits hot-reload; if a
 new route folder isn't picked up, run `docker compose restart app`.
 
-`OPENAI_API_KEY` is still required: the code agent calls OpenAI whichever
-sandbox runs the generated app.
+The code agent needs a model whichever sandbox runs the generated app: set
+`OPENAI_API_KEY`, or point it at a local model.
+
+### Local model with Ollama
+
+Any OpenAI-compatible API works. Pick a model that supports tool calls, then
+set:
+
+```bash
+OPENAI_BASE_URL=http://host.docker.internal:11434/v1   # http://localhost:11434/v1 without compose
+OPENAI_MODEL=qwen2.5-coder:7b                          # used by every agent
+```
+
+The Inngest server makes the model requests, so the URL must be reachable
+from where Inngest runs. Small models often write broken code or tool
+arguments, and Ollama's default 4096-token context is tight for the agent's
+prompt (raise it with `OLLAMA_CONTEXT_LENGTH`).
 
 ### Code sandbox: Docker or E2B
 

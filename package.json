@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npm run db:generate && next build",
+    "vercel-build": "sh scripts/vercel-build.sh",
     "start": "next start",
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",

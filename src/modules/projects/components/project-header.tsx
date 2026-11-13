@@ -2,7 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ChevronDownIcon, ChevronLeftIcon, SunMoonIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  GlobeIcon,
+  SunMoonIcon,
+} from "lucide-react";
 
 import { useTRPC } from "@/trpc/client";
 import { routes } from "@/lib/routes";
@@ -60,6 +65,12 @@ const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
             <Link href={routes.home}>
               <ChevronLeftIcon />
               Back to home
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={routes.website}>
+              <GlobeIcon />
+              Frame website
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

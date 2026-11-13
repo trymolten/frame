@@ -17,6 +17,11 @@ export const routes = {
   settings: "/settings",
   accountSettings: "/settings/account",
   usageSettings: "/settings/usage",
+  /**
+   * The marketing homepage for everyone, signed in or not. Signed-in "/" is
+   * the app, so this is how they get back to the website.
+   */
+  website: "/home",
   pricing: "/pricing",
   signIn: "/sign-in",
   signUp: "/sign-up",

@@ -35,6 +35,11 @@ describe("routes", () => {
     assert.equal(routes.accountSettings, "/settings/account");
     assert.equal(routes.usageSettings, "/settings/usage");
   });
+
+  it("links to the marketing site at /home, which signed-in users can reach", () => {
+    assert.equal(routes.website, "/home");
+    assert.equal(getLegacyRedirect(at(routes.website)), null);
+  });
 });
 
 describe("isProjectId", () => {

@@ -10,6 +10,7 @@ import {
   ChevronsUpDownIcon,
   CreditCardIcon,
   FolderIcon,
+  GlobeIcon,
   HouseIcon,
   LogOutIcon,
   SearchIcon,
@@ -194,6 +195,13 @@ function WorkspaceMenu() {
                 </DropdownMenuRadioGroup>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href={routes.website}>
+                <GlobeIcon />
+                Frame website
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onSelect={() => signOut({ redirectUrl: routes.home })}

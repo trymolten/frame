@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { dark } from "@clerk/themes";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth, UserButton } from "@clerk/nextjs";
 import { ErrorBoundary } from "react-error-boundary";
 import { CodeIcon, CrownIcon, EyeIcon } from "lucide-react";
 
 import { FileCollection } from "@/types/file";
 import { Fragment } from "@/generated/prisma/client";
+import { useTRPC } from "@/trpc/client";
 import { useCurrentTheme } from "@/hooks/use-current-theme";
 
 import { Button } from "@/components/ui/button";
@@ -33,6 +35,21 @@ const ProjectView = ({ projectId }: ProjectViewProps) => {
   const hasProPlan = has?.({ plan: "pro" });
   const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
   const [tabState, setTabState] = useState<"preview" | "code">("preview");
+
+  // Feeds "Recently viewed" on the dashboard.
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { mutate: markOpened } = useMutation(
+    trpc.projects.markOpened.mutationOptions({
+      onSuccess: () =>
+        queryClient.invalidateQueries({
+          queryKey: trpc.projects.list.pathKey(),
+        }),
+    })
+  );
+  useEffect(() => {
+    markOpened({ id: projectId });
+  }, [projectId, markOpened]);
 
   return (
     <div className="h-screen">

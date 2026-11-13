@@ -5,11 +5,7 @@ import { CrownIcon } from "lucide-react";
 import { formatDistanceStrict } from "date-fns";
 
 import { Button } from "@/components/ui/button";
-import type { inferRouterOutputs } from "@trpc/server";
-
-import type { AppRouter } from "@/trpc/routers/_app";
-
-type UsageStatus = inferRouterOutputs<AppRouter>["usage"]["getStatus"];
+import type { UsageStatus } from "@/modules/dashboard/types";
 
 export function Usage({ usage }: Readonly<{ usage: UsageStatus }>) {
   const isPro = usage.plan === "pro";

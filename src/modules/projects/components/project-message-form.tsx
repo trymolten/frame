@@ -47,16 +47,24 @@ const ProjectMessageForm = ({ projectId }: ProjectMessageFormProps) => {
       onSuccess: () => {
         form.reset();
         queryClient.invalidateQueries(
-          trpc.messages.getMessages.queryOptions({ projectId })
+          trpc.messages.getMessages.queryFilter({ projectId })
         );
-        queryClient.invalidateQueries(trpc.usage.getStatus.queryOptions());
+        queryClient.invalidateQueries(trpc.usage.getStatus.queryFilter());
+        queryClient.invalidateQueries({
+          queryKey: trpc.projects.list.pathKey(),
+        });
       },
       onError: (error) => {
-        toast.error(error.message);
-
         if (error.data?.code === "TOO_MANY_REQUESTS") {
-          router.push("/pricing");
+          toast.error(error.message, {
+            action: {
+              label: "View plans",
+              onClick: () => router.push("/pricing"),
+            },
+          });
+          return;
         }
+        toast.error(error.message);
       },
     })
   );

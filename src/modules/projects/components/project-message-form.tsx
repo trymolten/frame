@@ -74,12 +74,7 @@ const ProjectMessageForm = ({ projectId }: ProjectMessageFormProps) => {
 
   return (
     <Form {...form}>
-      {showUsage && (
-        <Usage
-          points={usage?.remainingPoints ?? 0}
-          msBeforeNext={usage?.msBeforeNext ?? 0}
-        />
-      )}
+      {showUsage && <Usage usage={usage} />}
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn(

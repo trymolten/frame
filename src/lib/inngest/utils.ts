@@ -15,8 +15,7 @@ export const lastAssistantMessageContent = async (result: AgentResult) => {
   );
 
   const message = result.output[lastAssistantMessageIndex] as
-    | TextMessage
-    | undefined;
+    TextMessage | undefined;
 
   if (!message?.content) {
     return undefined;

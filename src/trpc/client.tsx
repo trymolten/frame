@@ -28,8 +28,11 @@ function getQueryClient() {
 function getUrl() {
   const base = (() => {
     if (typeof window !== "undefined") return "";
-    if (process.env.NEXT_PUBLIC_APP_URL)
-      return `https://${process.env.NEXT_PUBLIC_APP_URL}`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (appUrl) {
+      // Accept both "example.com" and "https://example.com".
+      return /^https?:\/\//.test(appUrl) ? appUrl : `https://${appUrl}`;
+    }
     return "http://localhost:3000";
   })();
   return `${base}/api/trpc`;

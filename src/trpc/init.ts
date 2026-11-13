@@ -21,11 +21,17 @@ const t = initTRPC.context<TRPCContext>().create({
 });
 
 const isAuthenticated = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.auth?.userId) {
+  const { auth } = ctx;
+  if (!auth?.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
   }
-  return next({ ctx: { ...ctx, auth: ctx.auth } });
+  // Narrow the type only; Clerk's auth object carries methods like has().
+  return next({ ctx: { ...ctx, auth: auth as AuthedContext["auth"] } });
 });
+
+export type AuthedContext = TRPCContext & {
+  auth: TRPCContext["auth"] & { userId: string };
+};
 
 // Base router and procedure helpers
 export const createTRPCRouter = t.router;

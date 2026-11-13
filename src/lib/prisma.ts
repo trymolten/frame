@@ -8,6 +8,11 @@ const globalForPrisma = globalThis as unknown as {
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
+  // Keep the pool bounded per instance; with many serverless instances the
+  // database (or PgBouncer in front of it) is the shared limit.
+  max: Number(process.env.DATABASE_POOL_MAX ?? 10),
+  idleTimeoutMillis: 30_000,
+  connectionTimeoutMillis: 10_000,
 });
 
 const prisma =

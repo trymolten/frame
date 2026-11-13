@@ -1,50 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
-import { useAuth } from "@clerk/nextjs";
 import { CrownIcon } from "lucide-react";
-import { Duration, formatDuration, intervalToDuration } from "date-fns";
+import { formatDistanceStrict } from "date-fns";
 
 import { Button } from "@/components/ui/button";
+import type { UsageStatus } from "@/modules/dashboard/types";
 
-interface UsageProps {
-  points: number;
-  msBeforeNext: number;
-}
-
-export function Usage({ points, msBeforeNext }: Readonly<UsageProps>) {
-  const { has } = useAuth();
-  const hasProPlan = has?.({ plan: "pro" });
-
-  const creditsRemaining = useMemo(() => {
-    const plan = hasProPlan ? "pro" : "free";
-    const credits = `${points} ${plan} credits remaining`;
-    return credits;
-  }, [points, hasProPlan]);
-
-  const resetsIn = useMemo(() => {
-    try {
-      const now = new Date();
-      const end = new Date(now.getTime() + msBeforeNext);
-      const duration = intervalToDuration({ start: now, end });
-      const format: (keyof Duration)[] = ["months", "days", "hours", "minutes"];
-      const formattedDuration = formatDuration(duration, { format });
-      return formattedDuration;
-    } catch (error) {
-      console.error("Error formatting duration", error);
-      return "soon";
-    }
-  }, [msBeforeNext]);
+export function Usage({ usage }: Readonly<{ usage: UsageStatus }>) {
+  const isPro = usage.plan === "pro";
+  const resetsIn =
+    usage.msBeforeReset > 0
+      ? formatDistanceStrict(0, usage.msBeforeReset)
+      : null;
 
   return (
     <div className="rounded-t-xl bg-background border border-b-0 p-2.5">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm">{creditsRemaining}</p>
-          <p className="text-sm">Resets in {resetsIn}</p>
+          <p className="text-sm">
+            {usage.remaining} {isPro ? "Pro" : "free"} credits remaining
+          </p>
+          {resetsIn && (
+            <p className="text-sm text-muted-foreground">
+              Resets in {resetsIn}
+            </p>
+          )}
         </div>
-        {!hasProPlan && (
+        {!isPro && (
           <Button asChild size="sm" variant="outline" className="ml-auto">
             <Link href="/pricing">
               <CrownIcon /> Upgrade

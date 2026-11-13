@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { NonRetriableError } from "inngest";
 import { Sandbox } from "@e2b/code-interpreter";
 import {
   openai,
@@ -18,12 +19,17 @@ import {
 
 import prisma from "@/lib/prisma";
 import { inngest } from "@/lib/inngest/client";
+import { codeAgentRunSchema } from "@/lib/inngest/events";
 import {
   getSandbox,
   parseAgentOutput,
   lastAssistantMessageContent,
 } from "@/lib/inngest/utils";
 import { SANDBOX_TIMEOUT } from "@/constants/sandbox";
+import {
+  completeGeneration,
+  markGenerationFailed,
+} from "@/modules/projects/server/status";
 
 export interface AgentState {
   summary: string;
@@ -31,9 +37,42 @@ export interface AgentState {
 }
 
 export const codeAgentFunction = inngest.createFunction(
-  { id: "code-agent" },
+  {
+    id: "code-agent",
+    retries: 2,
+    // One run per project at a time (runs share a chat and a sandbox), and a
+    // fair share per user so one account can't starve the queue.
+    concurrency: [
+      { key: "event.data.projectId", limit: 1 },
+      { key: "event.data.userId", limit: 3 },
+    ],
+    onFailure: async ({ event }) => {
+      // Nothing to mark if the run failed because its payload was invalid.
+      const payload = codeAgentRunSchema.safeParse(event.data.event.data);
+      if (payload.success) {
+        await markGenerationFailed(payload.data.projectId);
+      }
+    },
+  },
   { event: "code-agent/run" },
   async ({ event, step }) => {
+    const payload = codeAgentRunSchema.safeParse(event.data);
+    if (!payload.success) {
+      throw new NonRetriableError("Invalid code-agent/run payload", {
+        cause: payload.error,
+      });
+    }
+    const { projectId, value } = payload.data;
+
+    // The project may have been deleted (or rolled back after an ambiguous
+    // send failure) before this run started; don't spend a sandbox on it.
+    const projectExists = await step.run("check-project", async () =>
+      Boolean(await prisma.project.count({ where: { id: projectId } }))
+    );
+    if (!projectExists) {
+      return { skipped: "project-not-found" };
+    }
+
     const sandboxId = await step.run("get-sandbox-id", async () => {
       const sandbox = await Sandbox.create("frame-nextjs-template");
       await sandbox.setTimeout(SANDBOX_TIMEOUT);
@@ -46,7 +85,7 @@ export const codeAgentFunction = inngest.createFunction(
         const formattedMessages: Message[] = [];
         const messages = await prisma.message.findMany({
           where: {
-            projectId: event.data.projectId,
+            projectId,
           },
           orderBy: {
             createdAt: "desc",
@@ -212,7 +251,7 @@ export const codeAgentFunction = inngest.createFunction(
       },
     });
 
-    const result = await network.run(event.data.value);
+    const result = await network.run(value);
 
     const fragmentTitleGenerator = createAgent({
       name: "fragment-title-generator",
@@ -257,33 +296,20 @@ export const codeAgentFunction = inngest.createFunction(
 
     await step.run("save-result", async () => {
       if (isError) {
-        return await prisma.message.create({
-          data: {
-            projectId: event.data.projectId,
-            content: "Something went wrong. Please try again.",
-            role: "ASSISTANT",
-            type: "ERROR",
-          },
-        });
+        return await markGenerationFailed(projectId);
       }
 
-      const createdMessage = await prisma.message.create({
-        data: {
-          projectId: event.data.projectId,
-          content: parseAgentOutput(responseOutput),
-          role: "ASSISTANT",
-          type: "RESULT",
-          fragment: {
-            create: {
-              title: parseAgentOutput(fragmentTitleOutput),
-              sandboxUrl: sandboxUrl,
-              files: result.state.data.files,
-            },
+      return await completeGeneration(projectId, {
+        content: parseAgentOutput(responseOutput),
+        type: "RESULT",
+        fragment: {
+          create: {
+            title: parseAgentOutput(fragmentTitleOutput),
+            sandboxUrl: sandboxUrl,
+            files: result.state.data.files,
           },
         },
       });
-
-      return createdMessage;
     });
 
     return {

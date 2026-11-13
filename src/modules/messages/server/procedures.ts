@@ -1,11 +1,11 @@
 import { z } from "zod";
-
 import { TRPCError } from "@trpc/server";
-import { protectedProcedure, createTRPCRouter } from "@/trpc/init";
 
+import { protectedProcedure, createTRPCRouter } from "@/trpc/init";
 import prisma from "@/lib/prisma";
 import { consumeCredits } from "@/lib/usage";
 import { inngest } from "@/lib/inngest/client";
+import { markGenerationFailed } from "@/modules/projects/server/status";
 
 export const messagesRouter = createTRPCRouter({
   getMessages: protectedProcedure
@@ -22,20 +22,24 @@ export const messagesRouter = createTRPCRouter({
             userId: ctx.auth.userId,
           },
         },
+        // createdAt is the conversation order and is indexed with projectId.
         orderBy: {
-          updatedAt: "asc",
+          createdAt: "asc",
         },
         include: {
           fragment: true,
         },
       });
+
       return messages;
     }),
+
   create: protectedProcedure
     .input(
       z.object({
         value: z
           .string()
+          .trim()
           .min(1, { message: "Value is required" })
           .max(10000, { message: "Value is too long" }),
         projectId: z.string().min(1, { message: "Project ID is required" }),
@@ -47,6 +51,7 @@ export const messagesRouter = createTRPCRouter({
           id: input.projectId,
           userId: ctx.auth.userId,
         },
+        select: { id: true },
       });
 
       if (!existingProject) {
@@ -56,39 +61,46 @@ export const messagesRouter = createTRPCRouter({
         });
       }
 
+      const { refund } = await consumeCredits(ctx.auth);
+
+      let saved = false;
       try {
-        await consumeCredits();
+        const [createdMessage] = await prisma.$transaction([
+          prisma.message.create({
+            data: {
+              projectId: existingProject.id,
+              content: input.value,
+              role: "USER",
+              type: "RESULT",
+            },
+          }),
+          prisma.project.update({
+            where: { id: existingProject.id },
+            data: { status: "GENERATING" },
+          }),
+        ]);
+        saved = true;
+
+        await inngest.send({
+          name: "code-agent/run",
+          data: {
+            value: input.value,
+            projectId: existingProject.id,
+            userId: ctx.auth.userId,
+          },
+        });
+
+        return createdMessage;
       } catch (error) {
-        if (error instanceof Error) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: error.message ?? "Something went wrong!",
-          });
+        await refund();
+        if (saved) {
+          await markGenerationFailed(existingProject.id);
         }
         throw new TRPCError({
-          code: "TOO_MANY_REQUESTS",
-          message:
-            "You have reached the maximum number of requests. Please upgrade to a paid plan or wait for the next reset.",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Couldn't send your message. Try again.",
+          cause: error,
         });
       }
-
-      const createdMessage = await prisma.message.create({
-        data: {
-          projectId: existingProject.id,
-          content: input.value,
-          role: "USER",
-          type: "RESULT",
-        },
-      });
-
-      await inngest.send({
-        name: "code-agent/run",
-        data: {
-          value: input.value,
-          projectId: input.projectId,
-        },
-      });
-
-      return createdMessage;
     }),
 });
